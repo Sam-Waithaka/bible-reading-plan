@@ -27,7 +27,7 @@ const EditableBlockQuoteView = ({ data, nodeKey }: { data: BlockQuoteData; nodeK
     <p className="flex items-center gap-2 font-sans text-xs font-black uppercase tracking-[0.18em] text-red-800 dark:text-red-200"><Quote size={15} /> Quotation</p>
     <p className="mt-5 whitespace-pre-line">{data.content}</p>
     {data.context ? <p className="mt-4 font-sans text-sm text-zinc-600 dark:text-stone-300">{data.context}</p> : null}
-    {data.attribution ? <p className="mt-3 font-sans text-sm font-bold text-zinc-700 dark:text-stone-200">— {data.attribution}</p> : null}
+    {data.attribution ? <p className="mt-3 font-sans text-sm font-bold text-zinc-700 dark:text-stone-200"><span aria-hidden="true">&mdash;</span> {data.attribution}</p> : null}
   </blockquote>;
 };
 

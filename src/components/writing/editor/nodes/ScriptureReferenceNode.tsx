@@ -101,7 +101,7 @@ const ScriptureReferenceView = ({ data }: { data: ScriptureData }) => {
       role="dialog"
       style={{ left: position?.left ?? 0, maxWidth: position?.maxWidth ?? CARD_WIDTH, top: position?.top ?? 0, width: 'min(20rem, calc(100vw - 2rem))' }}
     >
-      <span className="block text-xs font-black uppercase tracking-[0.16em] text-red-800 dark:text-red-200">{data.reference} {data.version ? `· ${data.version}` : ''}</span>
+      <span className="block text-xs font-black uppercase tracking-[0.16em] text-red-800 dark:text-red-200">{data.reference}{data.version ? <> <span aria-hidden="true">&middot;</span> {data.version}</> : null}</span>
       <span className="mt-3 block font-serif text-base leading-7">{data.text}</span>
     </span>,
     document.body,

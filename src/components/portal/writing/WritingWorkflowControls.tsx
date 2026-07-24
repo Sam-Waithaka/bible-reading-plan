@@ -617,7 +617,7 @@ const WritingWorkflowControls = ({
                 <div key={item.id} className={`rounded-2xl border px-4 py-3 text-sm leading-6 ${cardClass}`}>
                   <p className={darkMode ? 'font-black text-stone-200' : 'font-black text-zinc-900'}>{item.action_display}</p>
                   {item.note ? <p className={mutedTextClass}>{item.note}</p> : null}
-                  <p className={`mt-1 text-xs ${mutedTextClass}`}>{item.created_by_name} · {new Date(item.created_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: NAIROBI_TIME_ZONE })}</p>
+                  <p className={`mt-1 text-xs ${mutedTextClass}`}>{item.created_by_name} <span aria-hidden="true">&middot;</span> {new Date(item.created_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: NAIROBI_TIME_ZONE })}</p>
                 </div>
               ))}
             </div>
