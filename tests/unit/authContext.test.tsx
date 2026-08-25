@@ -117,7 +117,7 @@ describe('AuthProvider', () => {
     window.localStorage.setItem('aic.auth.refresh', 'refresh-token');
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(jsonResponse({ detail: 'expired' }, { status: 401 }))
-      .mockResolvedValueOnce(jsonResponse({ access: 'fresh-access' }))
+      .mockResolvedValueOnce(jsonResponse({ access: 'fresh-access', refresh: 'rotated-refresh' }))
       .mockResolvedValueOnce(jsonResponse(userPayload));
     vi.stubGlobal('fetch', fetchMock);
 
@@ -127,6 +127,7 @@ describe('AuthProvider', () => {
 
     expect(container.querySelector('[data-testid="status"]')?.textContent).toBe('authenticated');
     expect(window.localStorage.getItem('aic.auth.access')).toBe('fresh-access');
+    expect(window.localStorage.getItem('aic.auth.refresh')).toBe('rotated-refresh');
     expect(fetchMock).toHaveBeenNthCalledWith(2, '/v1/auth/token/refresh/', expect.objectContaining({
       body: JSON.stringify({ refresh: 'refresh-token' }),
     }));
@@ -147,5 +148,22 @@ describe('AuthProvider', () => {
 
     expect(container.querySelector('[data-testid="portal"]')?.textContent).toBe('yes');
     expect(container.querySelector('[data-testid="permission"]')?.textContent).toBe('no');
+  });
+  it('clears stale tokens and becomes anonymous when refresh fails', async () => {
+    window.localStorage.setItem('aic.auth.access', 'expired-access');
+    window.localStorage.setItem('aic.auth.refresh', 'expired-refresh');
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce(jsonResponse({ detail: 'expired access' }, { status: 401 }))
+      .mockResolvedValueOnce(jsonResponse({ detail: 'expired refresh' }, { status: 401 })));
+
+    await act(async () => {
+      root.render(<AuthProvider><AuthProbe /></AuthProvider>);
+    });
+
+    expect(container.querySelector('[data-testid="status"]')?.textContent).toBe('anonymous');
+    expect(container.querySelector('[data-testid="username"]')?.textContent).toBe('');
+    expect(container.querySelector('[data-testid="portal"]')?.textContent).toBe('no');
+    expect(window.localStorage.getItem('aic.auth.access')).toBeNull();
+    expect(window.localStorage.getItem('aic.auth.refresh')).toBeNull();
   });
 });

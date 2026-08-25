@@ -1,4 +1,5 @@
 import { ApiError, createApiUrl } from './apiClient';
+import { authenticatedFetch } from './authSession';
 import type {
   EditorialQueueFilters,
   EditorialQueueItem,
@@ -55,7 +56,7 @@ const readDetail = (payload: unknown) => {
 
 const portalRequest = async <T>(path: string, options: PortalRequestOptions): Promise<T> => {
   const endpoint = createApiUrl(path);
-  const response = await fetch(endpoint, {
+  const response = await authenticatedFetch(endpoint, options.accessToken, {
     body: options.body ? JSON.stringify(options.body) : undefined,
     headers: {
       Accept: 'application/json',

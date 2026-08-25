@@ -91,6 +91,44 @@ describe('SignInModal', () => {
     expect(container.textContent).toContain('Forgot password?');
   });
 
+  it('toggles password visibility without changing its value', async () => {
+    vi.stubGlobal('fetch', vi.fn());
+
+    await renderModal();
+    const passwordInput = container.querySelectorAll('input')[1] as HTMLInputElement;
+    const showPasswordButton = container.querySelector('button[aria-label="Show password"]') as HTMLButtonElement;
+
+    await act(async () => {
+      setInputValue(passwordInput, 'secret');
+      showPasswordButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(passwordInput.type).toBe('text');
+    expect(passwordInput.value).toBe('secret');
+    expect(container.querySelector('button[aria-label="Hide password"]')?.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('shows an accessible spinner while sign-in is pending', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => undefined)));
+
+    await renderModal();
+    const inputs = container.querySelectorAll('input');
+    await act(async () => {
+      setInputValue(inputs[0] as HTMLInputElement, 'publisher');
+      setInputValue(inputs[1] as HTMLInputElement, 'secret');
+    });
+    await act(async () => {
+      container.querySelector('form')?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    });
+
+    const submitButton = container.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitButton.disabled).toBe(true);
+    expect(submitButton.getAttribute('aria-busy')).toBe('true');
+    expect(submitButton.querySelector('svg')?.getAttribute('class')).toContain('motion-safe:animate-spin');
+    expect(submitButton.textContent).toBe('Signing in');
+    expect(submitButton.textContent).not.toContain('Signing in...');
+  });
+
   it('submits identifier credentials and redirects staff users to /portal', async () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(jsonResponse({ access: 'access-token', refresh: 'refresh-token' }))

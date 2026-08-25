@@ -98,7 +98,7 @@ describe('authApi', () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ access: 'next-access' }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(refreshToken('refresh-token')).resolves.toEqual({ access: 'next-access' });
+    await expect(refreshToken('refresh-token')).resolves.toEqual({ access: 'next-access', refresh: 'refresh-token' });
     expect(fetchMock).toHaveBeenCalledWith('/v1/auth/token/refresh/', expect.objectContaining({
       body: JSON.stringify({ refresh: 'refresh-token' }),
       method: 'POST',

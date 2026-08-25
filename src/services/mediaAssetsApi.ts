@@ -1,4 +1,5 @@
 import { ApiError, createApiUrl } from './apiClient';
+import { authenticatedFetch } from './authSession';
 import type { PaginatedResponse, WritingMediaAsset } from '../types/writing';
 
 export type MediaAssetStatus = 'pending' | 'processing' | 'ready' | 'failed' | 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED' | string;
@@ -52,11 +53,10 @@ const readDetail = (payload: unknown) => {
 
 const mediaRequest = async <T>(path: string, accessToken: string, init: RequestInit = {}) => {
   const endpoint = createApiUrl(path);
-  const response = await fetch(endpoint, {
+  const response = await authenticatedFetch(endpoint, accessToken, {
     ...init,
     headers: {
       Accept: 'application/json',
-      Authorization: 'Bearer ' + accessToken,
       ...(init.headers || {}),
     },
   });

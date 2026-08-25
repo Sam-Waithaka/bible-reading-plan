@@ -7,6 +7,7 @@ import type {
   AuthUser,
 } from '../types/auth';
 import { ApiError, createApiUrl } from './apiClient';
+import { authenticatedFetch, refreshStoredAuthTokens } from './authSession';
 
 type AuthPayload = Record<string, unknown>;
 
@@ -50,22 +51,32 @@ const authRequest = async (
     accessToken,
     body,
     method = 'GET',
+    retryOnUnauthorized = true,
   }: {
     accessToken?: string;
     body?: AuthPayload;
     method?: 'GET' | 'PATCH' | 'POST';
+    retryOnUnauthorized?: boolean;
   } = {},
 ) => {
   const endpoint = createApiUrl(path);
-  const response = await fetch(endpoint, {
+  const init: RequestInit = {
     body: body ? JSON.stringify(body) : undefined,
     headers: {
       Accept: 'application/json',
       ...(body ? { 'Content-Type': 'application/json' } : {}),
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
     method,
-  });
+  };
+  const response = accessToken && retryOnUnauthorized
+    ? await authenticatedFetch(endpoint, accessToken, init)
+    : await fetch(endpoint, {
+      ...init,
+      headers: {
+        ...init.headers,
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+    });
   const payload = await parseJson(response);
 
   if (!response.ok) {
@@ -123,24 +134,18 @@ export const tokenLogin = async (identifier: string, password: string): Promise<
   };
 };
 
-export const refreshToken = async (refresh: string): Promise<Pick<AuthTokens, 'access'>> => {
-  const payload = await authRequest('/v1/auth/token/refresh/', {
-    body: { refresh },
-    method: 'POST',
-  });
-
-  return { access: readString(payload, ['access']) };
-};
+export const refreshToken = async (refresh: string): Promise<AuthTokens> => refreshStoredAuthTokens(refresh);
 
 export const logout = (refresh: string, accessToken?: string) =>
   authRequest('/v1/auth/logout/', {
     accessToken,
     body: { refresh },
     method: 'POST',
+    retryOnUnauthorized: false,
   });
 
-export const getCurrentUser = async (accessToken: string): Promise<AuthUser> => {
-  const payload = await authRequest('/v1/auth/me/', { accessToken });
+export const getCurrentUser = async (accessToken: string, retryOnUnauthorized = true): Promise<AuthUser> => {
+  const payload = await authRequest('/v1/auth/me/', { accessToken, retryOnUnauthorized });
   return normalizeAuthUser(payload);
 };
 
@@ -203,7 +208,7 @@ export const setPassword = (token: string, newPassword: string) =>
 
 export const signIn = async (identifier: string, password: string): Promise<AuthSession> => {
   const tokens = await tokenLogin(identifier, password);
-  const user = await getCurrentUser(tokens.access);
+  const user = await getCurrentUser(tokens.access, false);
 
   return { tokens, user };
 };
