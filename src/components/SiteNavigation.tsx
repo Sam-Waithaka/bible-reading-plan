@@ -3,7 +3,6 @@ import {
   BookMarked,
   CalendarDays,
   ChevronDown,
-  FileText,
   Heart,
   HelpCircle,
   Home,
@@ -24,6 +23,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import SignInModal from './auth/SignInModal';
 import { assetPaths } from '../constants/assets';
+import { ResourceNavigationIcon } from '../constants/siteNavigation';
 import { useCompactHeader } from '../hooks/useCompactHeader';
 import { useAuth } from '../hooks/useAuth';
 
@@ -58,7 +58,7 @@ const navItems: SiteNavItem[] = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'Scripture', href: '/scripture', icon: BookOpen },
   { label: 'Project 52', href: '/project52', icon: BookMarked },
-  { label: 'Resources', href: '/resources', icon: FileText },
+  { label: 'Resources', href: '/resources', icon: ResourceNavigationIcon },
   { label: 'Media', href: '/media', icon: PlayCircle },
   { label: 'Ministries', href: '/ministries', icon: Users },
   { label: 'About', href: '/about', icon: Info },
@@ -92,7 +92,7 @@ const mobileNavSections: { title: string; items: SiteNavItem[] }[] = [
     items: [
       { label: 'Scripture', href: '/scripture', icon: BookOpen },
       { label: 'Project 52', href: '/project52', icon: BookMarked },
-      { label: 'Resources', href: '/resources', icon: FileText },
+      { label: 'Resources', href: '/resources', icon: ResourceNavigationIcon },
       { label: 'Media', href: '/media', icon: PlayCircle },
     ],
   },

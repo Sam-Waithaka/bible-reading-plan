@@ -1,6 +1,7 @@
 import { Check, ChevronDown, FileText, Grid2X2, X } from 'lucide-react';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { PublicResourceType } from '../../types/writing';
+import { ResourceNavigationIcon } from '../../constants/siteNavigation';
 import ResourcesContainer from './ResourcesContainer';
 
 type ResourceCategory = {
@@ -161,13 +162,17 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
           aria-expanded={open}
           aria-haspopup="dialog"
           onClick={() => setOpen(true)}
-          className="flex min-h-12 max-w-[min(76vw,19rem)] items-center gap-2.5 rounded-full border border-white/15 bg-zinc-950 px-4 text-left text-white shadow-[0_16px_40px_rgba(0,0,0,0.38)] ring-1 ring-black/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-transparent motion-reduce:transform-none"
+          className={`flex min-h-12 max-w-[min(76vw,19rem)] items-center gap-2.5 rounded-full border px-4 text-left shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 motion-reduce:transform-none ${
+            darkMode
+              ? 'border-white/15 bg-zinc-950 text-stone-100 shadow-black/40 ring-1 ring-white/5 focus:ring-offset-[#080808]'
+              : 'border-black/10 bg-[#fffaf0] text-zinc-950 shadow-zinc-900/10 ring-1 ring-white/80 hover:bg-white focus:ring-offset-[#f8f5ef]'
+          }`}
         >
           <span className="grid size-7 shrink-0 place-items-center rounded-full bg-red-800">
-            <Grid2X2 size={15} aria-hidden="true" />
+            <ResourceNavigationIcon size={15} aria-hidden="true" />
           </span>
           <span className="min-w-0 flex-1 truncate text-sm font-black">{activeCategory.label}</span>
-          <ChevronDown size={17} className="shrink-0" aria-hidden="true" />
+          <ChevronDown size={17} className="shrink-0 text-zinc-500 dark:text-stone-400" aria-hidden="true" />
         </button>
       </div>
 

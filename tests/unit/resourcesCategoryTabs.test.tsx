@@ -40,12 +40,17 @@ describe('ResourcesCategoryTabs', () => {
     expect(container.querySelectorAll('a[href^="/resources/type/"]')).toHaveLength(12);
     const trigger = container.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]');
     expect(trigger?.textContent).toContain('All Resources');
+    expect(trigger?.querySelector('.lucide-file-text')).not.toBeNull();
     expect(trigger?.getAttribute('aria-expanded')).toBe('false');
+    expect(trigger?.className).toContain('bg-zinc-950');
+    expect(trigger?.className).toContain('text-stone-100');
   });
 
   it('opens an accessible sheet, closes with Escape, and restores trigger focus', async () => {
     await act(async () => root.render(<ResourcesCategoryTabs darkMode={false} resourceTypes={resourceTypes} />));
     const trigger = container.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]')!;
+    expect(trigger.className).toContain('bg-[#fffaf0]');
+    expect(trigger.className).toContain('text-zinc-950');
 
     await act(async () => trigger.click());
     expect(container.querySelector('[role="dialog"]')).not.toBeNull();
