@@ -44,7 +44,7 @@ const MetaItem = ({ children, icon: Icon }: { children: ReactNode; icon: typeof 
   </span>
 );
 
-const EditorialCover = ({ article, className = '', eyebrow }: { article: PublicWritingCard; className?: string; eyebrow?: string }) => {
+const EditorialCover = ({ article, className = '', compact = false, eyebrow }: { article: PublicWritingCard; className?: string; compact?: boolean; eyebrow?: string }) => {
   const presentation = getEditorialCoverPresentation({
     categories: article.categories,
     resourceType: article.resource_type_detail,
@@ -88,9 +88,9 @@ const EditorialCover = ({ article, className = '', eyebrow }: { article: PublicW
       <div aria-hidden="true" className="absolute inset-x-4 top-4 h-px bg-white/12" />
       <div aria-hidden="true" className="absolute inset-x-4 bottom-4 h-px bg-black/18" />
 
-      <div className="relative z-10 flex min-h-full w-full flex-col px-5 py-6 pl-11 sm:px-7 sm:py-8 sm:pl-14">
+      <div className={`relative z-10 flex min-h-full w-full flex-col ${compact ? 'px-5 py-5 pl-11 sm:px-7 sm:py-7 sm:pl-14' : 'px-5 py-6 pl-11 sm:px-7 sm:py-8 sm:pl-14'}`}>
         {eyebrow ? (
-          <div className="mb-4 max-w-[13rem] text-[9px] font-black uppercase leading-[1.15] tracking-[0.22em]" style={{ color: palette.accent }}>
+          <div className={`max-w-[13rem] text-[9px] font-black uppercase leading-[1.15] tracking-[0.22em] ${compact ? 'mb-2.5' : 'mb-4'}`} style={{ color: palette.accent }}>
             {eyebrow}
           </div>
         ) : null}
@@ -98,35 +98,35 @@ const EditorialCover = ({ article, className = '', eyebrow }: { article: PublicW
           {resource?.label || articleAccent(article)}
         </div>
 
-        <div className="mt-6 h-px w-10 sm:mt-7" style={{ backgroundColor: palette.accent }} />
+        <div className={`h-px w-10 ${compact ? 'mt-3.5 sm:mt-5' : 'mt-6 sm:mt-7'}`} style={{ backgroundColor: palette.accent }} />
 
         {category ? (
-          <div className="mt-4 max-w-full font-serif text-base leading-snug sm:mt-5 sm:text-lg" style={{ color: palette.accent }}>
+          <div className={`max-w-full font-serif text-base leading-snug sm:text-lg ${compact ? 'mt-2.5 sm:mt-4' : 'mt-4 sm:mt-5'}`} style={{ color: palette.accent }}>
             {category.label}
           </div>
         ) : null}
 
         {series ? (
-          <div className="mt-4 max-w-full text-[9px] font-black uppercase leading-[1.35] tracking-[0.2em] opacity-90 sm:text-[10px]">
+          <div className={`max-w-full text-[9px] font-black uppercase leading-[1.35] tracking-[0.2em] opacity-90 sm:text-[10px] ${compact ? 'mt-2.5 line-clamp-2 sm:mt-4' : 'mt-4'}`}>
             {series.label}
           </div>
         ) : null}
 
-        <div className="mt-4 h-px w-9 sm:mt-5" style={{ backgroundColor: palette.accent }} />
+        <div className={`h-px w-9 ${compact ? 'mt-3 sm:mt-4' : 'mt-4 sm:mt-5'}`} style={{ backgroundColor: palette.accent }} />
 
-        <h3 className="mt-4 max-w-full font-serif text-[1.65rem] font-semibold leading-[1.04] tracking-[-0.02em] sm:text-[2rem]">
+        <h3 className={`max-w-full font-serif text-[1.1rem] font-semibold leading-[1.06] tracking-[-0.02em] min-[430px]:text-[1.25rem] sm:text-[1.8rem] ${compact ? 'mt-3 line-clamp-2' : 'mt-4'}`}>
           {title}
         </h3>
 
         {description ? (
-          <p className="mt-5 max-w-full text-xs font-medium leading-5 opacity-86 sm:text-sm sm:leading-6">
+          <p className={`max-w-full text-xs font-medium leading-5 opacity-86 sm:text-sm sm:leading-6 ${compact ? 'mt-3 line-clamp-2' : 'mt-5'}`}>
             {description}
           </p>
         ) : null}
 
-        <div className="mt-auto pt-8">
+        <div className={`mt-auto ${compact ? 'pt-4' : 'pt-8'}`}>
           <div className="h-px w-full bg-white/18" />
-          <div className="mt-4 grid gap-2 text-xs font-bold opacity-92">
+          <div className={`mt-4 text-xs font-bold opacity-92 ${compact ? 'flex flex-wrap gap-x-5 gap-y-2' : 'grid gap-2'}`}>
             <span className="inline-flex items-center gap-2">
               <Clock3 size={13} aria-hidden="true" />
               {article.reading_time_minutes || 1} min read
@@ -166,14 +166,14 @@ const ResourceCard = ({ article, className = '', eyebrow, presentation = 'defaul
 
   if (!hasCover) {
     const editorialCoverClass = isHero
-      ? 'min-h-[29rem] lg:min-h-[32rem]'
+      ? 'min-h-[18rem] sm:min-h-[21rem] xl:min-h-[32rem]'
       : variant === 'masonry'
         ? 'min-h-[13rem] sm:min-h-[17rem] md:min-h-[18rem]'
         : variant === 'rail'
           ? 'min-h-[17rem] md:min-h-[18rem]'
           : 'min-h-[16rem]';
     const editorialWidthClass = isHero
-      ? 'mx-auto w-full max-w-[38rem] lg:max-w-[43rem]'
+      ? 'mx-auto w-full max-w-none xl:max-w-[43rem]'
       : variant === 'masonry'
         ? 'w-full'
         : variant === 'rail'
@@ -186,15 +186,15 @@ const ResourceCard = ({ article, className = '', eyebrow, presentation = 'defaul
         className={`group block rounded-[1.35rem] transition duration-300 ease-out hover:-translate-y-1 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 ${editorialWidthClass} ${className}`}
         data-resource-card-mode="editorial-cover-only"
       >
-        <EditorialCover article={article} className={`${editorialCoverClass} transition duration-300 ease-out group-hover:shadow-2xl group-active:shadow-xl`} eyebrow={eyebrow} />
+        <EditorialCover article={article} className={`${editorialCoverClass} transition duration-300 ease-out group-hover:shadow-2xl group-active:shadow-xl`} compact={isHero} eyebrow={eyebrow} />
       </a>
     );
   }
 
   if (variant === 'feature') {
     return (
-      <a href={writingHref(article)} className={`group grid overflow-hidden rounded-3xl border border-[#eaded0] bg-white shadow-2xl shadow-zinc-900/10 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(17,17,17,0.12)] active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 lg:grid-cols-[1.12fr_0.88fr] ${!hasCover ? (isHero ? 'lg:grid-cols-[minmax(24rem,0.86fr)_minmax(0,1fr)]' : 'lg:grid-cols-[minmax(22rem,0.92fr)_minmax(0,0.78fr)]') : ''} ${className}`}>
-        <Cover article={article} className={hasCover ? 'min-h-72 lg:min-h-[23rem]' : (isHero ? 'min-h-[30rem] lg:min-h-[36rem]' : 'min-h-[28rem] lg:min-h-[32rem]')} />
+      <a href={writingHref(article)} className={`group grid overflow-hidden rounded-3xl border border-[#eaded0] bg-white shadow-2xl shadow-zinc-900/10 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(17,17,17,0.12)] active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 ${isHero ? 'md:grid-cols-[1.08fr_0.92fr]' : 'xl:grid-cols-[1.12fr_0.88fr]'} ${className}`}>
+        <Cover article={article} className={hasCover ? 'min-h-64 md:min-h-[20rem] xl:min-h-[23rem]' : (isHero ? 'min-h-[30rem] lg:min-h-[36rem]' : 'min-h-[28rem] lg:min-h-[32rem]')} />
         <span className={`flex flex-col justify-between p-6 sm:p-8 ${isHero && !hasCover ? 'lg:p-10' : ''}`}>
           <span>
             <span className="text-xs font-black uppercase tracking-[0.18em] text-red-800 dark:text-red-200">{eyebrow || 'Featured Resource'}</span>

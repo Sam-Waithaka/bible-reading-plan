@@ -1,7 +1,8 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import ResourceCard from '../components/resources/ResourceCard';
+import ResourceMasonry from '../components/resources/ResourceMasonry';
+import ResourcesContainer from '../components/resources/ResourcesContainer';
 import SiteFooter from '../components/SiteFooter';
 import SiteHeader from '../components/SiteHeader';
 import { useTheme } from '../hooks/useTheme';
@@ -74,19 +75,6 @@ const SectionHeading = ({ title }: { title: string }) => (
   </div>
 );
 
-const ResourceCardMasonry = ({ articles, shelf }: { articles: PublicWritingCard[]; shelf: string }) => (
-  <div className="columns-2 gap-3 sm:gap-5 md:columns-2 lg:columns-3 2xl:columns-4 [@media(min-width:1800px)]:columns-5" data-resources-masonry-shelf={shelf}>
-    {articles.map((article, index) => {
-      const shouldBreakGrid = (index + 1) % 9 === 0;
-      return shouldBreakGrid ? (
-        <ResourceCard article={article} className="mb-4 break-inside-avoid [column-span:all] sm:mb-6" key={article.id} variant="feature" />
-      ) : (
-        <ResourceCard article={article} className="mb-3 break-inside-avoid sm:mb-5" key={article.id} variant="masonry" />
-      );
-    })}
-  </div>
-);
-
 const SkeletonGrid = () => (
   <div className="grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     {[0, 1, 2, 3].map((item) => <div key={item} className="h-36 animate-pulse rounded-2xl border border-black/10 bg-white/70 shadow-lg shadow-zinc-900/5 dark:border-white/10 dark:bg-[#171717]" />)}
@@ -153,8 +141,8 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
     <div className={`flex min-h-screen flex-col overflow-x-clip transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
       <SiteHeader activePath="/resources" darkMode={darkMode} onToggleTheme={toggleTheme} />
       <main className={`flex-1 ${darkMode ? 'bg-[#080808]' : 'bg-[linear-gradient(180deg,#f8f5ef,#fffaf0_42%,#f8f5ef)]'}`}>
-        <section className="border-b border-black/10 px-4 py-14 dark:border-white/10 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
+        <section className="border-b border-black/10 py-14 dark:border-white/10">
+          <ResourcesContainer>
             <Link to="/resources" className="inline-flex items-center gap-2 text-sm font-black text-red-800 transition hover:text-red-700 dark:text-red-100">
               <ArrowLeft size={16} aria-hidden="true" /> Back to Resources
             </Link>
@@ -175,10 +163,10 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
                 ))}
               </div>
             ) : null}
-          </div>
+          </ResourcesContainer>
         </section>
 
-        <section className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:px-8">
+        <ResourcesContainer className="grid gap-10 py-10">
           {error ? <div className="rounded-2xl border border-red-900/15 bg-red-50 p-5 text-sm font-bold text-red-800 dark:border-red-400/20 dark:bg-red-950/30 dark:text-red-100">{error}</div> : null}
           {loading ? (
             <section className="grid gap-5">
@@ -190,14 +178,14 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
           {!loading && resourceTypeDetail?.featured_articles.length ? (
             <section className="grid gap-5">
               <SectionHeading title="Featured" />
-              <ResourceCardMasonry articles={resourceTypeDetail.featured_articles} shelf="type-featured" />
+              <ResourceMasonry articles={resourceTypeDetail.featured_articles} shelf="type-featured" />
             </section>
           ) : null}
 
           {!loading && resourceTypeDetail?.latest_articles.length ? (
             <section className="grid gap-5">
               <SectionHeading title="Latest" />
-              <ResourceCardMasonry articles={resourceTypeDetail.latest_articles} shelf="type-latest" />
+              <ResourceMasonry articles={resourceTypeDetail.latest_articles} shelf="type-latest" />
             </section>
           ) : null}
 
@@ -216,7 +204,7 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
                       <ArrowRight size={14} aria-hidden="true" />
                     </Link>
                   </div>
-                  <ResourceCardMasonry articles={rail.items} shelf="type-category-rail" />
+                  <ResourceMasonry articles={rail.items} shelf="type-category-rail" />
                 </div>
               ))}
             </section>
@@ -237,7 +225,7 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
                       <ArrowRight size={14} aria-hidden="true" />
                     </Link>
                   </div>
-                  <ResourceCardMasonry articles={rail.items} shelf="type-series-rail" />
+                  <ResourceMasonry articles={rail.items} shelf="type-series-rail" />
                 </div>
               ))}
             </section>
@@ -248,7 +236,7 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-red-800 dark:text-red-200">{count} {count === 1 ? 'Resource' : 'Resources'}</p>
               </div>
-              {items.length ? <ResourceCardMasonry articles={items} shelf="browse-results" /> : (
+              {items.length ? <ResourceMasonry articles={items} shelf="browse-results" /> : (
                 <div className="rounded-2xl border border-black/10 bg-white/70 p-8 text-center shadow-lg shadow-zinc-900/5 dark:border-white/10 dark:bg-[#171717]">
                   <h2 className="font-serif text-3xl font-bold">No published resources here yet.</h2>
                   <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-zinc-600 dark:text-stone-400">Once published writings are connected to this part of the library, they will appear here.</p>
@@ -270,7 +258,7 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
               </button>
             </div>
           ) : null}
-        </section>
+        </ResourcesContainer>
       </main>
       <SiteFooter darkMode={darkMode} />
     </div>

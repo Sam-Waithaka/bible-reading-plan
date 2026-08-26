@@ -2,6 +2,8 @@ import { ArrowRight, Rss, ScrollText, UsersRound } from 'lucide-react';
 import type { ReactNode } from 'react';
 import ResourcesCategoryTabs from './ResourcesCategoryTabs';
 import ResourceCard from './ResourceCard';
+import ResourceMasonry from './ResourceMasonry';
+import ResourcesContainer from './ResourcesContainer';
 import ResponsiveImage from '../media/ResponsiveImage';
 import SiteButton from '../ui/SiteButton';
 import { normalizeMediaAssetForDisplay } from '../../services/mediaAssetsApi';
@@ -94,14 +96,12 @@ const FeaturedArticleCard = ({ article, eyebrow = 'Latest Publication', loading 
   return <ResourceCard article={article} eyebrow={eyebrow} presentation="hero" variant="feature" />;
 };
 
-const ResourceArticleCard = ({ article, className = '' }: { article: PublicWritingCard; className?: string }) => <ResourceCard article={article} className={className} variant="masonry" />;
-
 const BrowseListCard = ({ emptyText, id, items, title }: { emptyText: string; id?: string; items: BrowseItem[]; title: string }) => (
   <section id={id} className="scroll-mt-28">
     <div className="mb-4 flex items-center justify-between gap-4">
       <h2 className={sectionLabelClass}>{title}</h2>
       <a
-        href="#resources-featured"
+        href="#resources-latest"
         className="inline-flex items-center gap-1 text-sm font-bold text-zinc-700 transition hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700 dark:text-stone-300 dark:hover:text-red-100"
       >
         View all
@@ -136,7 +136,7 @@ const BrowseListCard = ({ emptyText, id, items, title }: { emptyText: string; id
 const CenteredSectionHeader = ({ id, title }: { id?: string; title: string }) => (
   <div className="mb-5 flex items-center gap-4">
     <div className="h-px flex-1 bg-black/10 dark:bg-white/10" />
-    <h2 id={id} className={centeredSectionHeaderClass}>{title}</h2>
+    <h2 id={id} className={centeredSectionHeaderClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{title}</h2>
     <div className="h-px flex-1 bg-black/10 dark:bg-white/10" />
   </div>
 );
@@ -189,13 +189,11 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
     );
   }
 
-  if (!featuredCount) {
-    return <EmptyState>Featured resources will appear here once they are curated.</EmptyState>;
-  }
+  if (!featuredCount) return null;
 
   return (
     <div className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-featured-shelf="true">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div>
           <p className={sectionLabelClass}>Curated Shelf</p>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-stone-400">
@@ -206,7 +204,7 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
           {featuredCount} featured
         </p>
       </div>
-      <div className="columns-2 gap-3 sm:gap-5 md:columns-2 lg:columns-3 2xl:columns-4" data-resources-masonry-shelf="featured">
+      <div className="columns-2 gap-3 sm:gap-5 md:columns-2 xl:columns-3" data-resources-masonry-shelf="featured">
         {articles.map((article) => <FeaturedWritingCard article={article} key={`article-${article.id}`} />)}
         {categories.map((category) => <FeaturedCategoryCard category={category} key={`category-${category.id}`} />)}
         {series.map((item) => <FeaturedSeriesCard series={item} key={`series-${item.id}`} />)}
@@ -217,35 +215,15 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
 
 const ArticleGrid = ({ articles, emptyText, loading }: { articles: PublicWritingCard[]; emptyText: string; loading: boolean }) => {
   if (loading) {
-    return <div className="grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">{[0, 1, 2, 3].map((item) => <SkeletonBlock key={item} className="h-36" />)}</div>;
+    return <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">{[0, 1, 2, 3].map((item) => <SkeletonBlock key={item} className="h-56 sm:h-72" />)}</div>;
   }
   if (!articles.length) return <EmptyState>{emptyText}</EmptyState>;
-  return (
-    <div className="columns-2 gap-3 sm:gap-5 md:columns-2 lg:columns-3 2xl:columns-4 [@media(min-width:1800px)]:columns-5" data-resources-masonry-shelf="latest">
-      {articles.map((article, index) => {
-        const shouldBreakGrid = (index + 1) % 9 === 0;
-        return shouldBreakGrid ? (
-          <ResourceCard article={article} className="mb-4 break-inside-avoid [column-span:all] sm:mb-6" key={article.id} variant="feature" />
-        ) : (
-          <ResourceArticleCard article={article} className="mb-3 break-inside-avoid sm:mb-5" key={article.id} />
-        );
-      })}
-    </div>
-  );
+  return <ResourceMasonry articles={articles} shelf="latest" />;
 };
-
 const ArticleShelf = ({ articles, emptyText }: { articles: PublicWritingCard[]; emptyText: string }) => {
   if (!articles.length) return <EmptyState>{emptyText}</EmptyState>;
 
-  const previewArticles = articles.slice(0, 3);
-
-  return (
-    <div className="columns-2 gap-3 sm:gap-5 md:columns-2 lg:columns-3 2xl:columns-4" data-resources-article-shelf="true" data-resources-masonry-shelf="taxonomy">
-      {previewArticles.map((article) => (
-        <ResourceCard article={article} className="mb-3 break-inside-avoid sm:mb-5" key={article.id} variant="masonry" />
-      ))}
-    </div>
-  );
+  return <ResourceMasonry articles={articles} limit={3} shelf="taxonomy" />;
 };
 
 
@@ -255,18 +233,19 @@ const ResourceTypePreviewRail = ({ rail }: { rail: PublicResourceTypeRail }) => 
 
   return (
     <article className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="resource-type">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div className="min-w-0">
-          <p className={sectionLabelClass}>{resourceType.name}</p>
+          <p className={sectionLabelClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{resourceType.name}</p>
           <p className="mt-2 text-sm font-semibold text-zinc-600 dark:text-stone-400">
             {countLabel(count)} available
           </p>
         </div>
         <a
           href={`/resources/type/${resourceType.slug}`}
-          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717]"
+          className="inline-flex min-h-11 w-fit max-w-full min-w-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
         >
-          View more {resourceType.name}
+          <span className="sm:hidden">View all</span>
+          <span className="hidden min-w-0 max-w-[min(28rem,55vw)] break-words text-left sm:inline">View more {resourceType.name}</span>
           <ArrowRight size={14} aria-hidden="true" />
         </a>
       </div>
@@ -281,18 +260,19 @@ const CategoryPreviewRail = ({ rail }: { rail: PublicCategoryRail }) => {
 
   return (
     <article className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="category">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div className="min-w-0">
-          <p className={sectionLabelClass}>{category.name}</p>
+          <p className={sectionLabelClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{category.name}</p>
           <p className="mt-2 text-sm font-semibold text-zinc-600 dark:text-stone-400">
             {countLabel(count)} available
           </p>
         </div>
         <a
           href={`/resources/category/${category.slug}`}
-          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717]"
+          className="inline-flex min-h-11 w-fit max-w-full min-w-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
         >
-          View more {category.name}
+          <span className="sm:hidden">View all</span>
+          <span className="hidden min-w-0 max-w-[min(28rem,55vw)] break-words text-left sm:inline">View more {category.name}</span>
           <ArrowRight size={14} aria-hidden="true" />
         </a>
       </div>
@@ -307,18 +287,19 @@ const SeriesPreviewRail = ({ rail }: { rail: PublicSeriesRail }) => {
 
   return (
     <article className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="series">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div className="min-w-0">
-          <p className={sectionLabelClass}>{series.title}</p>
+          <p className={sectionLabelClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{series.title}</p>
           <p className="mt-2 text-sm font-semibold text-zinc-600 dark:text-stone-400">
             {countLabel(count)} available
           </p>
         </div>
         <a
           href={`/resources/series/${series.slug}`}
-          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717]"
+          className="inline-flex min-h-11 w-fit max-w-full min-w-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
         >
-          View more {series.title}
+          <span className="sm:hidden">View all</span>
+          <span className="hidden min-w-0 max-w-[min(28rem,55vw)] break-words text-left sm:inline">View more {series.title}</span>
           <ArrowRight size={14} aria-hidden="true" />
         </a>
       </div>
@@ -329,7 +310,7 @@ const SeriesPreviewRail = ({ rail }: { rail: PublicSeriesRail }) => {
 const ResourcesSubscribeStrip = ({ darkMode }: { darkMode: boolean }) => (
   <section className="rounded-2xl border border-black/10 bg-[#fffaf0] p-5 shadow-lg shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40">
     <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
         <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-red-950/5 text-red-800 dark:bg-red-950/35 dark:text-red-100">
           <Rss size={22} aria-hidden="true" />
         </span>
@@ -363,7 +344,7 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
   const resourceTypeRails = home?.resource_type_rails ?? [];
   const categoryRails = home?.category_rails ?? [];
   const seriesRails = home?.series_rails ?? [];
-  const latestPublication = latestArticles[0] || null;
+  const latestPublication = home?.hero_featured || latestArticles[0] || null;
   const scriptureBooks = home?.scripture_books.length ? home.scripture_books : navigation?.scripture_books ?? [];
   const ministries = home?.ministries.length ? home.ministries : navigation?.ministries ?? [];
   const scriptureItems = scriptureBooks.map((book: PublicScriptureBook) => ({
@@ -387,22 +368,23 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
           : 'bg-[linear-gradient(180deg,#f8f5ef,#fffaf0_42%,#f8f5ef)] text-zinc-950'
       }`}
     >
-      <section className="border-b border-black/10 px-4 py-12 dark:border-white/10 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        <div className="grid gap-10 md:grid-cols-[minmax(0,0.82fr)_minmax(20rem,1fr)] md:items-center md:gap-8 lg:grid-cols-[minmax(39rem,0.98fr)_minmax(0,0.86fr)] xl:gap-12" data-resources-hero-layout="two-column-tablet">
-          <div className="max-w-xl md:max-w-none xl:pl-16">
+      <section className="border-b border-black/10 py-12 dark:border-white/10 sm:py-16 xl:py-20">
+        <ResourcesContainer>
+          <div className="grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(25rem,0.82fr)] xl:items-center xl:gap-12" data-resources-hero-layout="two-column-tablet">
+          <div className="max-w-3xl">
             <p className={heroLabelClass}>THE LIBRARY</p>
-            <p className="mt-7 max-w-none font-serif text-[3rem] font-bold leading-[1.02] tracking-normal text-zinc-950 dark:text-stone-100 sm:mt-8 sm:text-[3.35rem] md:text-[3rem] lg:text-[3.95rem] xl:text-[4.15rem]">
-              <span className="block lg:whitespace-nowrap">Study deeply.</span>
-              <span className="block lg:whitespace-nowrap">Reflect faithfully.</span>
-              <span className="block text-red-700 lg:whitespace-nowrap">Live differently.</span>
+            <p className="mt-7 max-w-none font-serif text-[clamp(2.75rem,7vw,4.75rem)] font-bold leading-[0.98] tracking-normal text-zinc-950 dark:text-stone-100 sm:mt-8">
+              <span className="block xl:whitespace-nowrap">Study deeply.</span>
+              <span className="block xl:whitespace-nowrap">Reflect faithfully.</span>
+              <span className="block text-red-700 xl:whitespace-nowrap">Live differently.</span>
             </p>
-            <p className="mt-7 max-w-[30rem] text-base leading-8 text-zinc-700 dark:text-stone-300 sm:mt-8 md:max-w-[25rem] md:text-base lg:max-w-[30rem] lg:text-lg">
+            <p className="mt-7 max-w-[34rem] text-base leading-7 text-zinc-700 dark:text-stone-300 sm:mt-8 sm:text-lg sm:leading-8">
               Articles, Bible studies, pastoral guidance, and devotional reflections.
             </p>
             <div className="mt-8 h-px w-16 bg-red-700" aria-hidden="true" />
             <div className="mt-8">
               <a
-                href="#resources-featured"
+                href="#resources-latest"
                 className="inline-flex items-center gap-2 text-sm font-black text-red-800 transition hover:translate-x-1 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:text-red-100 dark:hover:text-red-200"
               >
                 Explore the library
@@ -410,15 +392,16 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
               </a>
             </div>
           </div>
-          <div className="min-w-0 md:justify-self-end md:[&_a[data-resource-card-mode='editorial-cover-only']]:max-w-full" data-resources-hero-article="true">
+          <div className="min-w-0 xl:justify-self-end xl:[&_a[data-resource-card-mode='editorial-cover-only']]:max-w-full" data-resources-hero-article="true">
             <FeaturedArticleCard article={latestPublication} eyebrow="Latest Publication" loading={loading} />
           </div>
-        </div>
+          </div>
+        </ResourcesContainer>
       </section>
 
       <ResourcesCategoryTabs darkMode={darkMode} resourceTypes={resourceTypes} />
 
-      <div className="grid gap-8 px-4 py-8 sm:gap-10 sm:px-6 sm:py-10 lg:px-8">
+      <ResourcesContainer className="grid gap-8 py-8 pb-32 sm:gap-10 sm:py-10 sm:pb-32 xl:pb-12">
         {error ? (
           <div className="rounded-2xl border border-red-900/15 bg-red-50 p-5 text-sm font-bold text-red-800 dark:border-red-400/20 dark:bg-red-950/30 dark:text-red-100">
             {error}
@@ -426,10 +409,10 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
         ) : null}
 
 
-        <section id="resources-featured" className="scroll-mt-28" aria-labelledby="resources-featured-heading">
+        {(loading || featuredArticles.length || featuredCategories.length || featuredSeries.length) ? <section id="resources-featured" className="scroll-mt-28" aria-labelledby="resources-featured-heading">
           <CenteredSectionHeader id="resources-featured-heading" title="Featured" />
           <FeaturedShowcase articles={featuredArticles} categories={featuredCategories} series={featuredSeries} loading={loading} />
-        </section>
+        </section> : null}
 
         <section aria-labelledby="resources-latest">
           <CenteredSectionHeader id="resources-latest" title="Latest" />
@@ -475,13 +458,15 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
           ) : null}
         </section>
 
-        <section className="grid min-w-0 gap-8 md:grid-cols-2">
-          {loading ? <SkeletonBlock className="h-80" /> : <BrowseListCard emptyText="Scripture books will appear here once published articles reference them." id="resources-scripture" title="Browse Scripture" items={scriptureItems} />}
-          {loading ? <SkeletonBlock className="h-80" /> : <BrowseListCard emptyText="Ministry resources will appear here once published writings are connected to ministries." id="resources-ministry" title="Browse Ministry" items={ministryItems} />}
-        </section>
+        {(loading || scriptureItems.length || ministryItems.length) ? (
+          <section className="grid min-w-0 gap-8 md:grid-cols-2">
+            {loading ? <SkeletonBlock className="h-80" /> : scriptureItems.length ? <BrowseListCard emptyText="" id="resources-scripture" title="Browse Scripture" items={scriptureItems} /> : null}
+            {loading ? <SkeletonBlock className="h-80" /> : ministryItems.length ? <BrowseListCard emptyText="" id="resources-ministry" title="Browse Ministry" items={ministryItems} /> : null}
+          </section>
+        ) : null}
 
         <ResourcesSubscribeStrip darkMode={darkMode} />
-      </div>
+      </ResourcesContainer>
     </main>
   );
 };
