@@ -1,4 +1,6 @@
-import { BookOpen, Play } from 'lucide-react';
+import { ScriptureIcon } from '../../constants/siteIcons';
+import { Play } from 'lucide-react';
+
 import type { AudioVisualHomePayload, AudioVisualItem } from '../../types/audioVisual';
 import { formatDuration, formatMediaDate } from './mediaFormat';
 import { getMediaWatchPath } from './mediaLinks';
@@ -69,7 +71,7 @@ const MediaHero = ({ darkMode, heroItem, home }: MediaHeroProps) => {
             </div>
             <div className="p-6 text-left">
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-red-700">
-                <BookOpen size={15} />
+                <ScriptureIcon size={15} />
                 From the pulpit
               </div>
               <h2 className={`mt-3 text-2xl font-extrabold leading-tight tracking-normal ${darkMode ? 'text-white' : 'text-zinc-950'}`}>{sermon?.title || 'Latest sermon'}</h2>

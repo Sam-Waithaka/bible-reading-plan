@@ -1,4 +1,6 @@
-import { ArrowRight, Rss, ScrollText, UsersRound } from 'lucide-react';
+import { ArrowRight, Rss, UsersRound } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { ScriptureIcon } from '../../constants/siteIcons';
 import type { ReactNode } from 'react';
 import ResourcesCategoryTabs from './ResourcesCategoryTabs';
 import ResourceCard from './ResourceCard';
@@ -36,7 +38,7 @@ type ImageBlockProps = {
 type BrowseItem = {
   count: number;
   href: string;
-  icon: typeof ScrollText;
+  icon: LucideIcon;
   label: string;
 };
 
@@ -350,7 +352,7 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
   const scriptureItems = scriptureBooks.map((book: PublicScriptureBook) => ({
     count: book.writing_count,
     href: `/resources/book/${encodeURIComponent(book.osis_id)}`,
-    icon: ScrollText,
+    icon: ScriptureIcon,
     label: book.name,
   }));
   const ministryItems = ministries.map((ministry: PublicResourceMinistry) => ({

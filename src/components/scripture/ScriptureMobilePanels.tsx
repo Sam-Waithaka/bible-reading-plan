@@ -1,4 +1,6 @@
-import { BookOpen, CalendarDays, X } from 'lucide-react';
+import { ScriptureIcon } from '../../constants/siteIcons';
+import { CalendarDays, X } from 'lucide-react';
+
 import { useEffect, useState } from 'react';
 import type { BibleBook, BibleChapter, BibleVersion } from '../../types/scripture';
 import BibleToolsPanel from './bibleTools/BibleToolsPanel';
@@ -61,7 +63,7 @@ const ScriptureMobilePanels = ({
             onClick={() => setActivePanel('tools')}
             className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-red-800 px-4 text-sm font-black text-white shadow-lg shadow-red-950/25 transition hover:bg-red-700 active:scale-[0.98]"
           >
-            <BookOpen size={18} />
+            <ScriptureIcon size={18} />
             Bible Tools
           </button>
           <button

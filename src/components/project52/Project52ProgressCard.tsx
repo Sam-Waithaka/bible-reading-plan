@@ -1,4 +1,6 @@
-import { BookMarked, CheckCircle2 } from 'lucide-react';
+import { Project52Icon } from '../../constants/siteIcons';
+import { CheckCircle2 } from 'lucide-react';
+
 import type { ReadingTarget } from '../../types/project52';
 import Project52ProgressBar from './Project52ProgressBar';
 
@@ -27,7 +29,7 @@ const Project52ProgressCard = ({
         </p>
         <h2 className="mt-2 text-2xl font-black">52-Week Reading Plan</h2>
       </div>
-      <BookMarked className={darkMode ? 'text-red-200' : 'text-red-800'} size={34} />
+      <Project52Icon className={darkMode ? 'text-red-200' : 'text-red-800'} size={34} />
     </div>
     <Project52ProgressBar currentWeek={currentWeek} darkMode={darkMode} yearProgress={yearProgress} className="mt-6" />
     <div className={`mt-6 grid gap-3 text-sm ${darkMode ? 'text-stone-300' : 'text-zinc-600'}`}>

@@ -1,5 +1,5 @@
+import { siteIcons } from '../constants/siteIcons';
 import {
-  BookOpen,
   ChevronRight,
   Compass,
   Flower2,
@@ -119,7 +119,7 @@ export const mockLatestArticles: ResourceArticle[] = [
 
 export const mockResourceTypes: ResourceType[] = [
   { count: 128, icon: Flower2, name: 'Devotionals' },
-  { count: 96, icon: BookOpen, name: 'Bible Studies' },
+  { count: 96, icon: siteIcons.scripture, name: 'Bible Studies' },
   { count: 34, icon: Mail, name: 'Pastoral Letters' },
   { count: 24, icon: Compass, name: 'Guides' },
   { count: 12, icon: UsersRound, name: 'Ministry Charters' },

@@ -1,4 +1,6 @@
-import { ArrowLeft, ArrowRight, BookOpen, Clock3, UserRound } from "lucide-react";
+import { ScriptureIcon } from '../constants/siteIcons';
+import { ArrowLeft, ArrowRight, Clock3, UserRound } from "lucide-react";
+
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import SiteFooter from "../components/SiteFooter";
@@ -142,7 +144,7 @@ const ReferencedScripturesSection = ({
             to={scriptureResourceUrl(reference)}
           >
             <span className="inline-flex min-w-0 items-center gap-2">
-              <BookOpen className="shrink-0 text-red-800 dark:text-red-200" size={15} aria-hidden="true" />
+              <ScriptureIcon className="shrink-0 text-red-800 dark:text-red-200" size={15} aria-hidden="true" />
               <span className="truncate">{reference.display_text}</span>
             </span>
             <ArrowRight className="shrink-0 transition group-hover:translate-x-0.5" size={14} aria-hidden="true" />

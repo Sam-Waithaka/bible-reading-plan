@@ -1,4 +1,6 @@
-import { ArrowRight, BookOpen, Clock, Play } from 'lucide-react';
+import { ScriptureIcon } from '../../constants/siteIcons';
+import { ArrowRight, Clock, Play } from 'lucide-react';
+
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { AudioVisualHomePayload, AudioVisualItem, AudioVisualLiveCta } from '../../types/audioVisual';
@@ -119,7 +121,7 @@ const PrimaryMediaCard = ({ darkMode, item }: { darkMode: boolean; item: AudioVi
 
               {item.scriptureReference && (
                 <span className="inline-flex items-center gap-3 rounded-2xl border border-white/15 bg-black/45 px-4 py-3 text-left text-xs text-stone-200 shadow-xl backdrop-blur">
-                  <BookOpen size={24} aria-hidden="true" />
+                  <ScriptureIcon size={24} aria-hidden="true" />
                   <span>
                     <span className="block text-[0.65rem] text-stone-300">Referenced Scripture</span>
                     <span className="block font-black text-white">{item.scriptureReference}</span>

@@ -1,5 +1,6 @@
-import { BookOpen } from 'lucide-react';
+import { ResourcesIcon } from '../../constants/siteIcons';
 import { Link } from 'react-router-dom';
+
 import { normalizeMediaAssetForDisplay } from '../../services/mediaAssetsApi';
 import type { PublicWritingCard } from '../../types/writing';
 import ResponsiveImage from '../media/ResponsiveImage';
@@ -26,7 +27,7 @@ const ResourceRailRecommendationCard = ({ article }: ResourceRailRecommendationC
           />
         ) : (
           <span className="flex aspect-square size-full items-center justify-center bg-red-900/10 text-red-800 dark:bg-red-200/10 dark:text-red-100">
-            <BookOpen size={16} aria-hidden="true" />
+            <ResourcesIcon size={16} aria-hidden="true" />
           </span>
         )}
       </span>

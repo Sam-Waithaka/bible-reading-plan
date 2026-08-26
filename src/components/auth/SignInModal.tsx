@@ -1,3 +1,4 @@
+import { AccountIcon } from '../../constants/siteIcons';
 import { useState } from "react";
 import type { FormEvent } from "react";
 import {
@@ -6,10 +7,10 @@ import {
   KeyRound,
   LoaderCircle,
   Mail,
-  UserCircle,
   X,
 } from "lucide-react";
 import { requestPasswordReset } from "../../services/authApi";
+
 import { useAuth } from "../../hooks/useAuth";
 
 type SignInModalProps = {
@@ -99,7 +100,7 @@ const SignInModal = ({ darkMode, onClose, open }: SignInModalProps) => {
             <span
               className={`grid size-12 place-items-center rounded-2xl ${darkMode ? "bg-white/10 text-red-100" : "bg-red-950/5 text-red-800"}`}
             >
-              <UserCircle size={23} />
+              <AccountIcon size={23} />
             </span>
             <h2 className="mt-5 text-2xl font-black">Sign in</h2>
             <p

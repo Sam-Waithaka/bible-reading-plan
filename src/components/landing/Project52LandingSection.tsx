@@ -1,4 +1,6 @@
-import { ArrowRight, BookOpen, Check } from 'lucide-react';
+import { ScriptureIcon } from '../../constants/siteIcons';
+import { ArrowRight, Check } from 'lucide-react';
+
 import { Link } from 'react-router-dom';
 import Project52ProgressBar from '../project52/Project52ProgressBar';
 import { useProject52 } from '../../contexts/Project52Context';
@@ -155,7 +157,7 @@ const Project52LandingSection = ({ darkMode }: Project52LandingSectionProps) => 
               </h3>
             </div>
             <div className={`hidden size-16 items-center justify-center rounded-full border sm:inline-flex ${darkMode ? 'border-red-400/30 bg-red-950/60 text-red-100' : 'border-red-900/15 bg-red-50 text-red-800'}`}>
-              <BookOpen size={28} aria-hidden="true" />
+              <ScriptureIcon size={28} aria-hidden="true" />
             </div>
           </div>
 

@@ -1,17 +1,14 @@
+import type { LucideIcon } from 'lucide-react';
+import { siteIcons } from '../constants/siteIcons';
 import {
   Bell,
-  BookOpen,
   CheckCircle2,
   ClipboardList,
   FileText,
-  FolderOpen,
   Library,
   Megaphone,
   PenLine,
-  PlayCircle,
-  ScrollText,
   ShieldCheck,
-  UserCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import SiteFooter from "../components/SiteFooter";
@@ -33,7 +30,7 @@ import {
 type PortalLinkItem = {
   description: string;
   href: string;
-  icon: typeof UserCircle;
+  icon: LucideIcon;
   label?: string;
   title: string;
 };
@@ -137,7 +134,7 @@ const buildQuickActions = (
         {
           description: "Read and study Scripture.",
           href: "/scripture",
-          icon: BookOpen,
+          icon: siteIcons.scripture,
           title: "Open Scripture",
         },
       ]
@@ -147,7 +144,7 @@ const buildQuickActions = (
         {
           description: "Continue the reading rhythm.",
           href: "/project52",
-          icon: ScrollText,
+          icon: siteIcons.project52,
           title: "Project 52",
         },
       ]
@@ -157,7 +154,7 @@ const buildQuickActions = (
         {
           description: "Watch sermons and church media.",
           href: "/media",
-          icon: PlayCircle,
+          icon: siteIcons.media,
           title: "Media",
         },
       ]
@@ -198,7 +195,7 @@ const buildAtAGlance = (capabilities: PortalCapabilityMap): PortalLinkItem[] =>
             description:
               "Follow the weekly Bible reading journey with the church.",
             href: "/project52",
-            icon: BookOpen,
+            icon: siteIcons.scripture,
             label: "Project 52",
             title: "Reading rhythm",
           },
@@ -210,7 +207,7 @@ const buildAtAGlance = (capabilities: PortalCapabilityMap): PortalLinkItem[] =>
             description:
               "Manage church media assets as media tools become available.",
             href: "/media",
-            icon: PlayCircle,
+            icon: siteIcons.media,
             label: "Media",
             title: "Media library",
           },
@@ -226,7 +223,7 @@ const buildAvailableModules = (
         {
           description: "Manage your account details and church profile.",
           href: "/portal#profile",
-          icon: UserCircle,
+          icon: siteIcons.account,
           title: "Profile",
         },
       ]
@@ -237,7 +234,7 @@ const buildAvailableModules = (
           description:
             "Read Scripture and return to saved passages as the library grows.",
           href: "/scripture",
-          icon: BookOpen,
+          icon: siteIcons.scripture,
           title: "Scripture",
         },
       ]
@@ -247,7 +244,7 @@ const buildAvailableModules = (
         {
           description: "Continue the shared church reading plan.",
           href: "/project52",
-          icon: ScrollText,
+          icon: siteIcons.project52,
           title: "Project 52",
         },
       ]
@@ -257,7 +254,7 @@ const buildAvailableModules = (
         {
           description: "Sermons, worship, teaching, and church media.",
           href: "/media",
-          icon: PlayCircle,
+          icon: siteIcons.media,
           title: "Media",
         },
       ]
@@ -267,7 +264,7 @@ const buildAvailableModules = (
         {
           description: "Articles, guides, and ministry resources.",
           href: "/resources",
-          icon: FolderOpen,
+          icon: siteIcons.resources,
           title: "Resources",
         },
       ]

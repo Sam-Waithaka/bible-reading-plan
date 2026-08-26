@@ -1,7 +1,7 @@
 import { Check, ChevronDown, FileText, Grid2X2, X } from 'lucide-react';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { PublicResourceType } from '../../types/writing';
-import { ResourceNavigationIcon } from '../../constants/siteNavigation';
+import { ResourcesIcon } from '../../constants/siteIcons';
 import ResourcesContainer from './ResourcesContainer';
 
 type ResourceCategory = {
@@ -169,7 +169,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
           }`}
         >
           <span className="grid size-7 shrink-0 place-items-center rounded-full bg-red-800">
-            <ResourceNavigationIcon size={15} aria-hidden="true" />
+            <ResourcesIcon size={15} aria-hidden="true" />
           </span>
           <span className="min-w-0 flex-1 truncate text-sm font-black">{activeCategory.label}</span>
           <ChevronDown size={17} className="shrink-0 text-zinc-500 dark:text-stone-400" aria-hidden="true" />

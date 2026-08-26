@@ -1,29 +1,20 @@
+import { AccountIcon, GivingIcon, siteIcons } from '../constants/siteIcons';
 import {
-  BookOpen,
-  BookMarked,
-  CalendarDays,
   ChevronDown,
-  Heart,
   HelpCircle,
-  Home,
-  Info,
-  LayoutDashboard,
   LogOut,
   Menu,
   Moon,
-  Phone,
-  PlayCircle,
   Settings,
   Sun,
-  UserCircle,
-  Users,
   X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 import SignInModal from './auth/SignInModal';
 import { assetPaths } from '../constants/assets';
-import { ResourceNavigationIcon } from '../constants/siteNavigation';
+
 import { useCompactHeader } from '../hooks/useCompactHeader';
 import { useAuth } from '../hooks/useAuth';
 
@@ -51,56 +42,56 @@ type SiteNavigationProps = {
 type SiteNavItem = {
   label: string;
   href: string;
-  icon: typeof Home;
+  icon: LucideIcon;
 };
 
 const navItems: SiteNavItem[] = [
-  { label: 'Home', href: '/', icon: Home },
-  { label: 'Scripture', href: '/scripture', icon: BookOpen },
-  { label: 'Project 52', href: '/project52', icon: BookMarked },
-  { label: 'Resources', href: '/resources', icon: ResourceNavigationIcon },
-  { label: 'Media', href: '/media', icon: PlayCircle },
-  { label: 'Ministries', href: '/ministries', icon: Users },
-  { label: 'About', href: '/about', icon: Info },
-  { label: 'Contact', href: '/contact', icon: Phone },
+  { label: 'Home', href: '/', icon: siteIcons.home },
+  { label: 'Scripture', href: '/scripture', icon: siteIcons.scripture },
+  { label: 'Project 52', href: '/project52', icon: siteIcons.project52 },
+  { label: 'Resources', href: '/resources', icon: siteIcons.resources },
+  { label: 'Media', href: '/media', icon: siteIcons.media },
+  { label: 'Ministries', href: '/ministries', icon: siteIcons.ministries },
+  { label: 'About', href: '/about', icon: siteIcons.about },
+  { label: 'Contact', href: '/contact', icon: siteIcons.contact },
 ];
-const giveNavItem: SiteNavItem = { label: 'Give', href: '/give', icon: Heart };
-const signInNavItem: SiteNavItem = { label: 'Sign in', href: '#portal-sign-in', icon: UserCircle };
+const giveNavItem: SiteNavItem = { label: 'Give', href: '/give', icon: siteIcons.giving };
+const signInNavItem: SiteNavItem = { label: 'Sign in', href: '#portal-sign-in', icon: siteIcons.account };
 const mobileMainNavItems = navItems.slice(0, 5);
 const mobileCommunityNavItems: SiteNavItem[] = [
-  { label: 'Ministries', href: '/ministries', icon: Users },
-  { label: 'Events', href: '#', icon: CalendarDays },
-  { label: 'About', href: '/about', icon: Info },
-  { label: 'Contact', href: '/contact', icon: Phone },
+  { label: 'Ministries', href: '/ministries', icon: siteIcons.ministries },
+  { label: 'Events', href: '#', icon: siteIcons.events },
+  { label: 'About', href: '/about', icon: siteIcons.about },
+  { label: 'Contact', href: '/contact', icon: siteIcons.contact },
 ];
 const mobileAccountNavItems: SiteNavItem[] = [
-  { label: 'Portal Dashboard', href: '/portal', icon: LayoutDashboard },
-  { label: 'Profile', href: '/portal#profile', icon: UserCircle },
-  { label: 'My Account', href: '/portal#account', icon: UserCircle },
+  { label: 'Portal Dashboard', href: '/portal', icon: siteIcons.dashboard },
+  { label: 'Profile', href: '/portal#profile', icon: siteIcons.account },
+  { label: 'My Account', href: '/portal#account', icon: siteIcons.account },
 ];
 const mobileNavSections: { title: string; items: SiteNavItem[] }[] = [
   {
     title: 'Explore',
     items: [
-      { label: 'Home', href: '/', icon: Home },
-      { label: 'About', href: '/about', icon: Info },
-      { label: 'Contact', href: '/contact', icon: Phone },
+      { label: 'Home', href: '/', icon: siteIcons.home },
+      { label: 'About', href: '/about', icon: siteIcons.about },
+      { label: 'Contact', href: '/contact', icon: siteIcons.contact },
     ],
   },
   {
     title: 'Spiritual Growth',
     items: [
-      { label: 'Scripture', href: '/scripture', icon: BookOpen },
-      { label: 'Project 52', href: '/project52', icon: BookMarked },
-      { label: 'Resources', href: '/resources', icon: ResourceNavigationIcon },
-      { label: 'Media', href: '/media', icon: PlayCircle },
+      { label: 'Scripture', href: '/scripture', icon: siteIcons.scripture },
+      { label: 'Project 52', href: '/project52', icon: siteIcons.project52 },
+      { label: 'Resources', href: '/resources', icon: siteIcons.resources },
+      { label: 'Media', href: '/media', icon: siteIcons.media },
     ],
   },
   {
     title: 'Community',
     items: [
-      { label: 'Ministries', href: '/ministries', icon: Users },
-      { label: 'Events', href: '#', icon: CalendarDays },
+      { label: 'Ministries', href: '/ministries', icon: siteIcons.ministries },
+      { label: 'Events', href: '#', icon: siteIcons.events },
     ],
   },
   {
@@ -212,7 +203,7 @@ const SiteNavigation = ({
         return `${shapeClass} ${themeClass} ${activeClass}`;
       }}
     >
-      <Heart size={shape === 'top' ? 16 : shape === 'drawer' ? 18 : 17} />
+      <GivingIcon size={shape === 'top' ? 16 : shape === 'drawer' ? 18 : 17} />
       {giveNavItem.label}
     </NavLink>
   );
@@ -366,9 +357,9 @@ const SiteNavigation = ({
             )}
             {section.title === 'Actions' && auth.user && (
               <>
-                {renderNavItem({ label: 'Profile', href: '/portal#profile', icon: UserCircle }, shape, onRouteClick)}
-                {renderNavItem({ label: 'My Account', href: '/portal#account', icon: UserCircle }, shape, onRouteClick)}
-                {renderNavItem({ label: 'Portal Dashboard', href: '/portal', icon: LayoutDashboard }, shape, onRouteClick)}
+                {renderNavItem({ label: 'Profile', href: '/portal#profile', icon: siteIcons.account }, shape, onRouteClick)}
+                {renderNavItem({ label: 'My Account', href: '/portal#account', icon: siteIcons.account }, shape, onRouteClick)}
+                {renderNavItem({ label: 'Portal Dashboard', href: '/portal', icon: siteIcons.dashboard }, shape, onRouteClick)}
                 <button
                   type="button"
                   onClick={async () => {
@@ -392,7 +383,7 @@ const SiteNavigation = ({
                 }}
                 className={getUtilityItemClass(shape)}
               >
-                <UserCircle size={shape === 'drawer' ? 18 : 17} />
+                <AccountIcon size={shape === 'drawer' ? 18 : 17} />
                 {signInNavItem.label}
               </button>
             )}
@@ -550,9 +541,9 @@ const SiteNavigation = ({
                     <p className={`truncate text-xs ${darkMode ? 'text-stone-400' : 'text-zinc-500'}`}>{auth.user.email || auth.user.phoneNumber}</p>
                   </div>
                   {[
-                    { href: '/portal#profile', icon: UserCircle, label: 'Profile' },
-                    { href: '/portal#account', icon: UserCircle, label: 'My Account' },
-                    { href: '/portal', icon: LayoutDashboard, label: 'Portal Dashboard' },
+                    { href: '/portal#profile', icon: siteIcons.account, label: 'Profile' },
+                    { href: '/portal#account', icon: siteIcons.account, label: 'My Account' },
+                    { href: '/portal', icon: siteIcons.dashboard, label: 'Portal Dashboard' },
                   ].map(({ href, icon: Icon, label }) => (
                     <Link
                       key={label}
@@ -610,7 +601,7 @@ const SiteNavigation = ({
               }`}
               aria-label="Sign in"
             >
-              <UserCircle size={18} />
+              <AccountIcon size={18} />
             </button>
           )}
           {!auth.user && (

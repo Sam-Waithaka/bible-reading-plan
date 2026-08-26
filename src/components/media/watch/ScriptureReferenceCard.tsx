@@ -1,6 +1,8 @@
+import { ScriptureIcon } from '../../../constants/siteIcons';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { BookOpen, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+
 import { getBibleVersesByReference } from '../../../services/scriptureApi';
 import type { BibleVerse } from '../../../types/scripture';
 import type { ParsedScriptureReference } from './mediaWatchUtils';
@@ -102,7 +104,7 @@ const ScriptureReferenceCard = ({ darkMode, reference }: ScriptureReferenceCardP
     >
       <div className="flex items-start gap-3">
         <div className={`grid size-11 shrink-0 place-items-center rounded-full ${darkMode ? 'bg-red-950/50 text-red-100' : 'bg-red-50 text-red-800'}`}>
-          <BookOpen size={19} />
+          <ScriptureIcon size={19} />
         </div>
         <div className="min-w-0">
           <h3 className={`text-lg font-black ${darkMode ? 'text-white' : 'text-zinc-950'}`}>{reference.display}</h3>

@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react';
+import { ScriptureIcon } from '../../constants/siteIcons';
 import type { BibleBook, BibleChapter, BibleChapterNote, BibleVersion } from '../../types/scripture';
 import BibleToolsPanel from './bibleTools/BibleToolsPanel';
 import ChapterNavigation from './ChapterNavigation';
@@ -55,7 +55,7 @@ const ScriptureSidePanel = ({
         >
           <div className="flex items-center gap-3">
             <span className={`grid size-11 place-items-center rounded-full ${darkMode ? 'bg-red-950/40 text-red-100' : 'bg-red-900/10 text-red-900'}`}>
-              <BookOpen size={20} />
+              <ScriptureIcon size={20} />
             </span>
             <div>
               <p className="text-xs font-black uppercase tracking-[0.16em] text-red-900 dark:text-red-200">Cross references</p>
