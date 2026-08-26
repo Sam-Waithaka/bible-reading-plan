@@ -60,7 +60,7 @@ const ImageBlock = ({ asset, className = '', tone }: ImageBlockProps) => {
   const responsiveAsset = normalizeMediaAssetForDisplay(asset);
 
   return (
-    <div className={`relative overflow-hidden bg-gradient-to-br ${tone} ${className}`}>
+    <div className={`relative box-border w-full max-w-full min-w-0 overflow-hidden bg-gradient-to-br ${tone} ${className}`}>
       {responsiveAsset ? <ResponsiveImage alt="" asset={responsiveAsset} className="absolute inset-0 size-full object-cover" preset="card" /> : null}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(255,255,255,0.46),transparent_20%),linear-gradient(180deg,transparent,rgba(0,0,0,0.52))]" />
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(150deg,transparent_18%,rgba(255,255,255,0.18)_19%,transparent_20%,transparent_32%,rgba(255,255,255,0.12)_33%,transparent_34%)]" />
@@ -99,12 +99,12 @@ const FeaturedArticleCard = ({ article, eyebrow = 'Latest Publication', loading 
 };
 
 const BrowseListCard = ({ emptyText, id, items, title }: { emptyText: string; id?: string; items: BrowseItem[]; title: string }) => (
-  <section id={id} className="scroll-mt-28">
-    <div className="mb-4 flex items-center justify-between gap-4">
+  <section id={id} className="box-border w-full max-w-full min-w-0 scroll-mt-28">
+    <div className="mb-4 flex box-border w-full max-w-full min-w-0 items-center justify-between gap-4">
       <h2 className={sectionLabelClass}>{title}</h2>
       <a
         href="#resources-latest"
-        className="inline-flex items-center gap-1 text-sm font-bold text-zinc-700 transition hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700 dark:text-stone-300 dark:hover:text-red-100"
+        className="inline-flex min-w-0 shrink-0 items-center gap-1 text-sm font-bold text-zinc-700 transition hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700 dark:text-stone-300 dark:hover:text-red-100"
       >
         View all
         <ArrowRight size={14} aria-hidden="true" />
@@ -119,7 +119,7 @@ const BrowseListCard = ({ emptyText, id, items, title }: { emptyText: string; id
             <a
               href={item.href}
               key={`${item.href}-${item.label}`}
-              className="flex min-h-12 items-center gap-3 border-b border-black/10 px-4 text-sm transition last:border-b-0 hover:bg-[#fffaf0] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-700 dark:border-white/10 dark:hover:bg-[#171717]"
+              className="flex min-h-12 box-border w-full max-w-full min-w-0 items-center gap-3 border-b border-black/10 px-4 text-sm transition last:border-b-0 hover:bg-[#fffaf0] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-700 dark:border-white/10 dark:hover:bg-[#171717]"
             >
               <span className="grid size-7 shrink-0 place-items-center rounded-full bg-red-950/5 text-red-800 dark:bg-red-950/35 dark:text-red-100">
                 <Icon size={14} aria-hidden="true" />
@@ -136,7 +136,7 @@ const BrowseListCard = ({ emptyText, id, items, title }: { emptyText: string; id
 );
 
 const CenteredSectionHeader = ({ id, title }: { id?: string; title: string }) => (
-  <div className="mb-5 flex items-center gap-4">
+  <div className="mb-5 flex box-border w-full max-w-full min-w-0 items-center gap-4">
     <div className="h-px flex-1 bg-black/10 dark:bg-white/10" />
     <h2 id={id} className={centeredSectionHeaderClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{title}</h2>
     <div className="h-px flex-1 bg-black/10 dark:bg-white/10" />
@@ -149,7 +149,7 @@ const FeaturedWritingCard = ({ article }: { article: PublicWritingCard }) => (
 );
 
 const FeaturedCategoryCard = ({ category }: { category: ResourcesHome['featured_categories'][number] }) => (
-  <a href={`/resources/category/${category.slug}`} className="group mb-5 flex min-h-72 break-inside-avoid flex-col justify-between rounded-[1.75rem] border border-[#eaded0] bg-[#fffaf0] p-6 shadow-xl shadow-zinc-900/5 transition hover:-translate-y-1 hover:bg-white focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:shadow-black/40 dark:hover:bg-[#171717]">
+  <a href={`/resources/category/${category.slug}`} className="group mb-5 flex min-h-72 box-border w-full max-w-full min-w-0 break-inside-avoid flex-col justify-between rounded-[1.75rem] border border-[#eaded0] bg-[#fffaf0] p-6 shadow-xl shadow-zinc-900/5 transition hover:-translate-y-1 hover:bg-white focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:shadow-black/40 dark:hover:bg-[#171717]">
     <span>
       <span className="inline-flex rounded-full border border-red-900/10 bg-red-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-red-800 dark:border-red-200/10 dark:bg-red-950/30 dark:text-red-100">Featured Collection</span>
       <span className="mt-8 block font-serif text-3xl font-semibold leading-tight tracking-normal text-zinc-950 dark:text-stone-100">{category.name}</span>
@@ -164,7 +164,7 @@ const FeaturedCategoryCard = ({ category }: { category: ResourcesHome['featured_
 );
 
 const FeaturedSeriesCard = ({ series }: { series: PublicResourceSeries }) => (
-  <a href={`/resources/series/${series.slug}`} className="group mb-5 grid min-h-72 break-inside-avoid overflow-hidden rounded-[1.75rem] border border-black/10 bg-white shadow-xl shadow-zinc-900/5 transition hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:grid-cols-[10rem_1fr]">
+  <a href={`/resources/series/${series.slug}`} className="group mb-5 grid min-h-72 box-border w-full max-w-full min-w-0 break-inside-avoid overflow-hidden rounded-[1.75rem] border border-black/10 bg-white shadow-xl shadow-zinc-900/5 transition hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:grid-cols-[10rem_1fr]">
     <ImageBlock asset={series.cover_image_detail} tone={toneFor(series.slug || series.id)} className="min-h-72" />
     <span className="flex min-w-0 flex-col justify-between p-6">
       <span>
@@ -185,7 +185,7 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
 
   if (loading) {
     return (
-      <div className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6">
+      <div className="box-border w-full max-w-full min-w-0 rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6">
         <div className="grid min-w-0 gap-5 lg:grid-cols-3">{[0, 1, 2].map((item) => <SkeletonBlock key={item} className="h-72" />)}</div>
       </div>
     );
@@ -194,7 +194,7 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
   if (!featuredCount) return null;
 
   return (
-    <div className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-featured-shelf="true">
+    <div className="box-border w-full max-w-full min-w-0 rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-featured-shelf="true">
       <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div>
           <p className={sectionLabelClass}>Curated Shelf</p>
@@ -206,7 +206,7 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
           {featuredCount} featured
         </p>
       </div>
-      <div className="columns-2 gap-3 sm:gap-5 md:columns-2 xl:columns-3" data-resources-masonry-shelf="featured">
+      <div className="box-border w-full max-w-full min-w-0 columns-2 gap-3 sm:gap-5 md:columns-2 xl:columns-3" data-resources-masonry-shelf="featured">
         {articles.map((article) => <FeaturedWritingCard article={article} key={`article-${article.id}`} />)}
         {categories.map((category) => <FeaturedCategoryCard category={category} key={`category-${category.id}`} />)}
         {series.map((item) => <FeaturedSeriesCard series={item} key={`series-${item.id}`} />)}
@@ -217,7 +217,7 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
 
 const ArticleGrid = ({ articles, emptyText, loading }: { articles: PublicWritingCard[]; emptyText: string; loading: boolean }) => {
   if (loading) {
-    return <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">{[0, 1, 2, 3].map((item) => <SkeletonBlock key={item} className="h-56 sm:h-72" />)}</div>;
+    return <div className="grid box-border w-full max-w-full min-w-0 grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">{[0, 1, 2, 3].map((item) => <SkeletonBlock key={item} className="h-56 sm:h-72" />)}</div>;
   }
   if (!articles.length) return <EmptyState>{emptyText}</EmptyState>;
   return <ResourceMasonry articles={articles} shelf="latest" />;
@@ -234,7 +234,7 @@ const ResourceTypePreviewRail = ({ rail }: { rail: PublicResourceTypeRail }) => 
   const count = rail.count ?? resourceType.writing_count ?? rail.items.length;
 
   return (
-    <article className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="resource-type">
+    <article className="box-border w-full max-w-full min-w-0 rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="resource-type">
       <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div className="min-w-0">
           <p className={sectionLabelClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{resourceType.name}</p>
@@ -244,10 +244,10 @@ const ResourceTypePreviewRail = ({ rail }: { rail: PublicResourceTypeRail }) => 
         </div>
         <a
           href={`/resources/type/${resourceType.slug}`}
-          className="inline-flex min-h-11 w-fit max-w-full min-w-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
+          className="inline-flex min-h-11 box-border w-full max-w-full min-w-0 items-center justify-center sm:w-auto gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
         >
           <span className="sm:hidden">View all</span>
-          <span className="hidden min-w-0 max-w-[min(28rem,55vw)] break-words text-left sm:inline">View more {resourceType.name}</span>
+          <span className="hidden min-w-0 max-w-[28rem] break-words text-left sm:inline">View more {resourceType.name}</span>
           <ArrowRight size={14} aria-hidden="true" />
         </a>
       </div>
@@ -261,7 +261,7 @@ const CategoryPreviewRail = ({ rail }: { rail: PublicCategoryRail }) => {
   const count = rail.count ?? category.writing_count ?? rail.items.length;
 
   return (
-    <article className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="category">
+    <article className="box-border w-full max-w-full min-w-0 rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="category">
       <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div className="min-w-0">
           <p className={sectionLabelClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{category.name}</p>
@@ -271,10 +271,10 @@ const CategoryPreviewRail = ({ rail }: { rail: PublicCategoryRail }) => {
         </div>
         <a
           href={`/resources/category/${category.slug}`}
-          className="inline-flex min-h-11 w-fit max-w-full min-w-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
+          className="inline-flex min-h-11 box-border w-full max-w-full min-w-0 items-center justify-center sm:w-auto gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
         >
           <span className="sm:hidden">View all</span>
-          <span className="hidden min-w-0 max-w-[min(28rem,55vw)] break-words text-left sm:inline">View more {category.name}</span>
+          <span className="hidden min-w-0 max-w-[28rem] break-words text-left sm:inline">View more {category.name}</span>
           <ArrowRight size={14} aria-hidden="true" />
         </a>
       </div>
@@ -288,7 +288,7 @@ const SeriesPreviewRail = ({ rail }: { rail: PublicSeriesRail }) => {
   const count = rail.count ?? series.writing_count ?? rail.items.length;
 
   return (
-    <article className="rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="series">
+    <article className="box-border w-full max-w-full min-w-0 rounded-[2rem] border border-[#eaded0] bg-[#fffaf0]/80 p-5 shadow-xl shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 sm:p-6" data-resources-taxonomy-shelf="series">
       <div className="mb-5 grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div className="min-w-0">
           <p className={sectionLabelClass + ' min-w-0 break-words [overflow-wrap:anywhere]'}>{series.title}</p>
@@ -298,10 +298,10 @@ const SeriesPreviewRail = ({ rail }: { rail: PublicSeriesRail }) => {
         </div>
         <a
           href={`/resources/series/${series.slug}`}
-          className="inline-flex min-h-11 w-fit max-w-full min-w-0 items-center gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
+          className="inline-flex min-h-11 box-border w-full max-w-full min-w-0 items-center justify-center sm:w-auto gap-2 rounded-full border border-[#eaded0] bg-white px-4 py-2 text-sm font-black text-red-800 shadow-sm shadow-zinc-900/5 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-[#171717] dark:text-red-100 dark:hover:bg-[#171717] sm:justify-self-end"
         >
           <span className="sm:hidden">View all</span>
-          <span className="hidden min-w-0 max-w-[min(28rem,55vw)] break-words text-left sm:inline">View more {series.title}</span>
+          <span className="hidden min-w-0 max-w-[28rem] break-words text-left sm:inline">View more {series.title}</span>
           <ArrowRight size={14} aria-hidden="true" />
         </a>
       </div>
@@ -310,8 +310,8 @@ const SeriesPreviewRail = ({ rail }: { rail: PublicSeriesRail }) => {
   );
 };
 const ResourcesSubscribeStrip = ({ darkMode }: { darkMode: boolean }) => (
-  <section className="rounded-2xl border border-black/10 bg-[#fffaf0] p-5 shadow-lg shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40">
-    <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+  <section className="box-border w-full max-w-full min-w-0 rounded-2xl border border-black/10 bg-[#fffaf0] p-5 shadow-lg shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40">
+    <div className="flex box-border w-full max-w-full min-w-0 flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-3 sm:gap-4">
         <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-red-950/5 text-red-800 dark:bg-red-950/35 dark:text-red-100">
           <Rss size={22} aria-hidden="true" />
@@ -364,23 +364,23 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
 
   return (
     <main
-      className={`flex-1 ${
+      className={`box-border w-full max-w-full min-w-0 flex-1 ${
         darkMode
           ? 'bg-[#080808] text-stone-100'
           : 'bg-[linear-gradient(180deg,#f8f5ef,#fffaf0_42%,#f8f5ef)] text-zinc-950'
       }`}
     >
-      <section className="border-b border-black/10 py-12 dark:border-white/10 sm:py-16 xl:py-20">
+      <section className="box-border w-full max-w-full min-w-0 border-b border-black/10 py-12 dark:border-white/10 sm:py-16 xl:py-20">
         <ResourcesContainer>
-          <div className="grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(25rem,0.82fr)] xl:items-center xl:gap-12" data-resources-hero-layout="two-column-tablet">
-          <div className="max-w-3xl">
+          <div className="grid box-border w-full max-w-full min-w-0 gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(25rem,0.82fr)] xl:items-center xl:gap-12" data-resources-hero-layout="two-column-tablet">
+          <div className="w-full max-w-3xl min-w-0">
             <p className={heroLabelClass}>THE LIBRARY</p>
-            <p className="mt-7 max-w-none font-serif text-[clamp(2.75rem,7vw,4.75rem)] font-bold leading-[0.98] tracking-normal text-zinc-950 dark:text-stone-100 sm:mt-8">
-              <span className="block xl:whitespace-nowrap">Study deeply.</span>
-              <span className="block xl:whitespace-nowrap">Reflect faithfully.</span>
-              <span className="block text-red-700 xl:whitespace-nowrap">Live differently.</span>
+            <p className="mt-7 min-w-0 max-w-full break-words font-serif text-[clamp(2.75rem,7vw,4.75rem)] font-bold leading-[0.98] tracking-normal text-zinc-950 dark:text-stone-100 sm:mt-8">
+              <span className="block min-w-0 break-words">Study deeply.</span>
+              <span className="block min-w-0 break-words">Reflect faithfully.</span>
+              <span className="block min-w-0 break-words text-red-700">Live differently.</span>
             </p>
-            <p className="mt-7 max-w-[34rem] text-base leading-7 text-zinc-700 dark:text-stone-300 sm:mt-8 sm:text-lg sm:leading-8">
+            <p className="mt-7 min-w-0 max-w-[34rem] break-words text-base leading-7 text-zinc-700 dark:text-stone-300 sm:mt-8 sm:text-lg sm:leading-8">
               Articles, Bible studies, pastoral guidance, and devotional reflections.
             </p>
             <div className="mt-8 h-px w-16 bg-red-700" aria-hidden="true" />
@@ -394,7 +394,7 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
               </a>
             </div>
           </div>
-          <div className="min-w-0 xl:justify-self-end xl:[&_a[data-resource-card-mode='editorial-cover-only']]:max-w-full" data-resources-hero-article="true">
+          <div className="box-border w-full max-w-full min-w-0 xl:justify-self-end xl:[&_a[data-resource-card-mode='editorial-cover-only']]:max-w-full" data-resources-hero-article="true">
             <FeaturedArticleCard article={latestPublication} eyebrow="Latest Publication" loading={loading} />
           </div>
           </div>
@@ -403,7 +403,7 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
 
       <ResourcesCategoryTabs darkMode={darkMode} resourceTypes={resourceTypes} />
 
-      <ResourcesContainer className="grid gap-8 py-8 pb-32 sm:gap-10 sm:py-10 sm:pb-32 xl:pb-12">
+      <ResourcesContainer className="grid box-border w-full max-w-full min-w-0 gap-8 py-8 pb-32 sm:gap-10 sm:py-10 sm:pb-32 xl:pb-12">
         {error ? (
           <div className="rounded-2xl border border-red-900/15 bg-red-50 p-5 text-sm font-bold text-red-800 dark:border-red-400/20 dark:bg-red-950/30 dark:text-red-100">
             {error}
@@ -411,57 +411,57 @@ const ResourcesLanding = ({ darkMode, error = '', home, loading, navigation }: R
         ) : null}
 
 
-        {(loading || featuredArticles.length || featuredCategories.length || featuredSeries.length) ? <section id="resources-featured" className="scroll-mt-28" aria-labelledby="resources-featured-heading">
+        {(loading || featuredArticles.length || featuredCategories.length || featuredSeries.length) ? <section id="resources-featured" className="box-border w-full max-w-full min-w-0 scroll-mt-28" aria-labelledby="resources-featured-heading">
           <CenteredSectionHeader id="resources-featured-heading" title="Featured" />
           <FeaturedShowcase articles={featuredArticles} categories={featuredCategories} series={featuredSeries} loading={loading} />
         </section> : null}
 
-        <section aria-labelledby="resources-latest">
+        <section className="box-border w-full max-w-full min-w-0" aria-labelledby="resources-latest">
           <CenteredSectionHeader id="resources-latest" title="Latest" />
           <ArticleGrid articles={latestArticles} emptyText="Latest published writings will appear here soon." loading={loading} />
         </section>
 
-        <section id="resources-resource-type-rails" className="scroll-mt-28" aria-labelledby="resources-resource-type-rails-heading">
+        <section id="resources-resource-type-rails" className="box-border w-full max-w-full min-w-0 scroll-mt-28" aria-labelledby="resources-resource-type-rails-heading">
           <CenteredSectionHeader id="resources-resource-type-rails-heading" title="Explore by Resource Type" />
           {loading ? (
-            <div className="grid gap-6">
+            <div className="grid box-border w-full max-w-full min-w-0 gap-6">
               {[0, 1, 2].map((item) => <SkeletonBlock key={item} className="h-56 rounded-[2rem]" />)}
             </div>
           ) : resourceTypeRails.length ? (
-            <div className="grid gap-6">
+            <div className="grid box-border w-full max-w-full min-w-0 gap-6">
               {resourceTypeRails.map((rail) => <ResourceTypePreviewRail key={rail.resource_type.id} rail={rail} />)}
             </div>
           ) : null}
         </section>
 
-        <section id="resources-category-rails" className="scroll-mt-28" aria-labelledby="resources-category-rails-heading">
+        <section id="resources-category-rails" className="box-border w-full max-w-full min-w-0 scroll-mt-28" aria-labelledby="resources-category-rails-heading">
           <CenteredSectionHeader id="resources-category-rails-heading" title="Explore by Category" />
           {loading ? (
-            <div className="grid gap-6">
+            <div className="grid box-border w-full max-w-full min-w-0 gap-6">
               {[0, 1, 2].map((item) => <SkeletonBlock key={item} className="h-56 rounded-[2rem]" />)}
             </div>
           ) : categoryRails.length ? (
-            <div className="grid gap-6">
+            <div className="grid box-border w-full max-w-full min-w-0 gap-6">
               {categoryRails.map((rail) => <CategoryPreviewRail key={rail.category.id} rail={rail} />)}
             </div>
           ) : null}
         </section>
 
-        <section id="resources-series-rails" className="scroll-mt-28" aria-labelledby="resources-series-rails-heading">
+        <section id="resources-series-rails" className="box-border w-full max-w-full min-w-0 scroll-mt-28" aria-labelledby="resources-series-rails-heading">
           <CenteredSectionHeader id="resources-series-rails-heading" title="Explore by Series" />
           {loading ? (
-            <div className="grid gap-6">
+            <div className="grid box-border w-full max-w-full min-w-0 gap-6">
               {[0, 1, 2].map((item) => <SkeletonBlock key={item} className="h-56 rounded-[2rem]" />)}
             </div>
           ) : seriesRails.length ? (
-            <div className="grid gap-6">
+            <div className="grid box-border w-full max-w-full min-w-0 gap-6">
               {seriesRails.map((rail) => <SeriesPreviewRail key={rail.series.id} rail={rail} />)}
             </div>
           ) : null}
         </section>
 
         {(loading || scriptureItems.length || ministryItems.length) ? (
-          <section className="grid min-w-0 gap-8 md:grid-cols-2">
+          <section className="grid box-border w-full max-w-full min-w-0 gap-8 md:grid-cols-2">
             {loading ? <SkeletonBlock className="h-80" /> : scriptureItems.length ? <BrowseListCard emptyText="" id="resources-scripture" title="Browse Scripture" items={scriptureItems} /> : null}
             {loading ? <SkeletonBlock className="h-80" /> : ministryItems.length ? <BrowseListCard emptyText="" id="resources-ministry" title="Browse Ministry" items={ministryItems} /> : null}
           </section>

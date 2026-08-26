@@ -40,7 +40,7 @@ const ResourcesPage = () => {
   }, []);
 
   return (
-    <div className={`flex min-h-screen flex-col overflow-x-clip transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
+    <div className={`flex min-h-screen box-border w-full max-w-full min-w-0 flex-col transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
       <SiteHeader activePath="/resources" darkMode={darkMode} onToggleTheme={toggleTheme} />
 
       <ResourcesLanding darkMode={darkMode} error={error} home={home} loading={loading} navigation={navigation} />

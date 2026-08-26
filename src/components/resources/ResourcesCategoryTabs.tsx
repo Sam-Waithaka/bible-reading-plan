@@ -117,10 +117,10 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
 
   return (
     <>
-      <nav className="relative z-10 -mt-7 hidden xl:block" aria-label="Resource library categories">
+      <nav className="relative z-10 -mt-7 hidden box-border w-full max-w-full min-w-0 xl:block" aria-label="Resource library categories">
         <ResourcesContainer>
           <div
-            className={`flex flex-wrap justify-center gap-2 rounded-2xl border p-2 shadow-2xl backdrop-blur-xl ${
+            className={`flex box-border w-full max-w-full min-w-0 flex-wrap justify-center gap-2 rounded-2xl border p-2 shadow-2xl backdrop-blur-xl ${
               darkMode ? 'border-white/10 bg-black/70 shadow-black/30' : 'border-black/10 bg-white/95 shadow-zinc-900/10'
             }`}
           >
@@ -150,7 +150,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
       </nav>
 
       <div
-        className={`fixed inset-x-0 z-40 flex justify-center px-4 transition duration-200 xl:hidden ${
+        className={`fixed inset-x-0 z-40 flex box-border w-full max-w-full min-w-0 justify-center px-4 transition duration-200 xl:hidden ${
           (nearFooter || concealedWhileScrolling) && !open ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'
         }`}
         style={{ bottom: 'calc(0.5rem + env(safe-area-inset-bottom))' }}
@@ -162,7 +162,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
           aria-expanded={open}
           aria-haspopup="dialog"
           onClick={() => setOpen(true)}
-          className={`flex min-h-12 max-w-[min(76vw,19rem)] items-center gap-2.5 rounded-full border px-4 text-left shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 motion-reduce:transform-none ${
+          className={`flex min-h-12 w-auto max-w-full min-w-0 items-center gap-2.5 rounded-full border px-4 text-left shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 motion-reduce:transform-none ${
             darkMode
               ? 'border-white/15 bg-zinc-950 text-stone-100 shadow-black/40 ring-1 ring-white/5 focus:ring-offset-[#080808]'
               : 'border-black/10 bg-[#fffaf0] text-zinc-950 shadow-zinc-900/10 ring-1 ring-white/80 hover:bg-white focus:ring-offset-[#f8f5ef]'
@@ -177,7 +177,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
       </div>
 
       {open ? (
-        <div className="fixed inset-0 z-50 xl:hidden">
+        <div className="fixed inset-0 z-50 box-border w-full max-w-full min-w-0 xl:hidden">
           <button
             type="button"
             className="absolute inset-0 size-full cursor-default bg-black/70 backdrop-blur-sm"
@@ -190,15 +190,15 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
             role="dialog"
             aria-modal="true"
             aria-labelledby={`${sheetId}-title`}
-            className={`absolute inset-x-0 bottom-0 max-h-[min(78dvh,42rem)] overflow-hidden rounded-t-[2rem] border-t shadow-2xl ${
+            className={`absolute inset-x-0 bottom-0 box-border w-full max-w-full min-w-0 max-h-[min(78dvh,42rem)] overflow-hidden rounded-t-[2rem] border-t shadow-2xl ${
               darkMode ? 'border-white/10 bg-[#0b0b0b] text-stone-100' : 'border-black/10 bg-[#fffaf0] text-zinc-950'
             }`}
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
-            <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 dark:border-white/10">
-              <div>
+            <div className="flex box-border w-full max-w-full min-w-0 items-center justify-between gap-4 border-b border-black/10 px-5 py-4 dark:border-white/10">
+              <div className="min-w-0 flex-1">
                 <p className="text-[11px] font-black uppercase tracking-[0.18em] text-red-700">The Library</p>
-                <h2 id={`${sheetId}-title`} className="mt-1 font-serif text-2xl font-bold">Browse Resources</h2>
+                <h2 id={`${sheetId}-title`} className="mt-1 min-w-0 break-words font-serif text-2xl font-bold">Browse Resources</h2>
               </div>
               <button
                 type="button"
@@ -209,7 +209,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
                 <X size={20} aria-hidden="true" />
               </button>
             </div>
-            <nav className="max-h-[calc(min(78dvh,42rem)-5.5rem)] overflow-y-auto overscroll-contain px-4 py-3" aria-label="Browse resource categories">
+            <nav className="box-border w-full max-w-full min-w-0 max-h-[calc(min(78dvh,42rem)-5.5rem)] overflow-y-auto overscroll-contain px-4 py-3" aria-label="Browse resource categories">
               {categories.map((category, index) => {
                 const Icon = index === 0 ? Grid2X2 : FileText;
                 const isActive = category.key === activeCategory.key;
@@ -219,7 +219,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
                     href={category.href}
                     aria-current={isActive ? 'page' : undefined}
                     onClick={() => setOpen(false)}
-                    className={`flex min-h-14 items-center gap-3 rounded-xl px-3 text-base font-bold transition focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-700 ${
+                    className={`flex min-h-14 box-border w-full max-w-full min-w-0 items-center gap-3 rounded-xl px-3 text-base font-bold transition focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-700 ${
                       isActive
                         ? 'bg-red-800 text-white'
                         : darkMode

@@ -38,7 +38,7 @@ const articleAuthor = (article: PublicWritingCard) => {
 const articleAccent = (article: PublicWritingCard) => article.resource_type_detail?.name || article.writing_type || 'Resource';
 
 const MetaItem = ({ children, icon: Icon }: { children: ReactNode; icon: typeof Clock3 }) => (
-  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-stone-400">
+  <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-stone-400">
     <Icon size={14} aria-hidden="true" />
     {children}
   </span>
@@ -61,7 +61,7 @@ const EditorialCover = ({ article, className = '', compact = false, eyebrow }: {
   return (
     <div
       aria-label={`${article.title} editorial cover`}
-      className={`relative isolate flex min-h-full overflow-hidden rounded-[1.15rem] ${className}`}
+      className={`relative isolate flex min-h-full box-border w-full max-w-full min-w-0 overflow-hidden rounded-[1.15rem] ${className}`}
       data-editorial-book-object="true"
       data-resource-card-cover="editorial"
       style={{
@@ -88,7 +88,7 @@ const EditorialCover = ({ article, className = '', compact = false, eyebrow }: {
       <div aria-hidden="true" className="absolute inset-x-4 top-4 h-px bg-white/12" />
       <div aria-hidden="true" className="absolute inset-x-4 bottom-4 h-px bg-black/18" />
 
-      <div className={`relative z-10 flex min-h-full w-full flex-col ${compact ? 'px-5 py-5 pl-11 sm:px-7 sm:py-7 sm:pl-14' : 'px-5 py-6 pl-11 sm:px-7 sm:py-8 sm:pl-14'}`}>
+      <div className={`relative z-10 flex min-h-full box-border w-full max-w-full min-w-0 flex-col ${compact ? 'px-5 py-5 pl-11 sm:px-7 sm:py-7 sm:pl-14' : 'px-5 py-6 pl-11 sm:px-7 sm:py-8 sm:pl-14'}`}>
         {eyebrow ? (
           <div className={`max-w-[13rem] text-[9px] font-black uppercase leading-[1.15] tracking-[0.22em] ${compact ? 'mb-2.5' : 'mb-4'}`} style={{ color: palette.accent }}>
             {eyebrow}
@@ -146,7 +146,7 @@ const PhotographyCover = ({ article, className = '' }: { article: PublicWritingC
   const responsiveAsset = normalizeMediaAssetForDisplay(article.og_image_detail);
 
   return (
-    <div className={`relative overflow-hidden bg-stone-900 ${className}`} data-resource-card-cover="photography">
+    <div className={`relative box-border w-full max-w-full min-w-0 overflow-hidden bg-stone-900 ${className}`} data-resource-card-cover="photography">
       {responsiveAsset ? <ResponsiveImage alt="" asset={responsiveAsset} className="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] group-active:scale-[1.02]" preset="card" /> : null}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(255,255,255,0.34),transparent_20%),linear-gradient(180deg,transparent,rgba(0,0,0,0.58))]" />
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(150deg,transparent_18%,rgba(255,255,255,0.16)_19%,transparent_20%,transparent_32%,rgba(255,255,255,0.11)_33%,transparent_34%)]" />
@@ -183,7 +183,7 @@ const ResourceCard = ({ article, className = '', eyebrow, presentation = 'defaul
     return (
       <a
         href={writingHref(article)}
-        className={`group block rounded-[1.35rem] transition duration-300 ease-out hover:-translate-y-1 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 ${editorialWidthClass} ${className}`}
+        className={`group block min-w-0 max-w-full rounded-[1.35rem] transition duration-300 ease-out hover:-translate-y-1 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 ${editorialWidthClass} ${className}`}
         data-resource-card-mode="editorial-cover-only"
       >
         <EditorialCover article={article} className={`${editorialCoverClass} transition duration-300 ease-out group-hover:shadow-2xl group-active:shadow-xl`} compact={isHero} eyebrow={eyebrow} />
@@ -193,9 +193,9 @@ const ResourceCard = ({ article, className = '', eyebrow, presentation = 'defaul
 
   if (variant === 'feature') {
     return (
-      <a href={writingHref(article)} className={`group grid overflow-hidden rounded-3xl border border-[#eaded0] bg-white shadow-2xl shadow-zinc-900/10 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(17,17,17,0.12)] active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 ${isHero ? 'md:grid-cols-[1.08fr_0.92fr]' : 'xl:grid-cols-[1.12fr_0.88fr]'} ${className}`}>
+      <a href={writingHref(article)} className={`group grid box-border w-full max-w-full min-w-0 overflow-hidden rounded-3xl border border-[#eaded0] bg-white shadow-2xl shadow-zinc-900/10 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(17,17,17,0.12)] active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 ${isHero ? 'md:grid-cols-[1.08fr_0.92fr]' : 'xl:grid-cols-[1.12fr_0.88fr]'} ${className}`}>
         <Cover article={article} className={hasCover ? 'min-h-64 md:min-h-[20rem] xl:min-h-[23rem]' : (isHero ? 'min-h-[30rem] lg:min-h-[36rem]' : 'min-h-[28rem] lg:min-h-[32rem]')} />
-        <span className={`flex flex-col justify-between p-6 sm:p-8 ${isHero && !hasCover ? 'lg:p-10' : ''}`}>
+        <span className={`flex min-w-0 flex-col justify-between p-6 sm:p-8 ${isHero && !hasCover ? 'lg:p-10' : ''}`}>
           <span>
             <span className="text-xs font-black uppercase tracking-[0.18em] text-red-800 dark:text-red-200">{eyebrow || 'Featured Resource'}</span>
             <span className={`mt-4 block max-w-sm font-extrabold leading-tight tracking-normal text-zinc-950 transition-colors duration-300 group-hover:text-red-800 dark:text-stone-100 dark:group-hover:text-red-100 ${isHero && !hasCover ? 'text-4xl sm:text-5xl' : 'text-3xl sm:text-4xl'}`}>{article.title}</span>
@@ -220,7 +220,7 @@ const ResourceCard = ({ article, className = '', eyebrow, presentation = 'defaul
     return (
       <a
         href={writingHref(article)}
-        className={`group block min-w-0 overflow-hidden rounded-[1.15rem] border border-[#eaded0] bg-white shadow-lg shadow-zinc-900/5 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 sm:rounded-2xl ${className}`}
+        className={`group block box-border w-full max-w-full min-w-0 overflow-hidden rounded-[1.15rem] border border-[#eaded0] bg-white shadow-lg shadow-zinc-900/5 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 sm:rounded-2xl ${className}`}
         data-resource-card-mode="masonry-image"
       >
         <Cover article={article} className="min-h-[9.5rem] sm:min-h-[13rem] lg:min-h-[14rem]" />
@@ -239,7 +239,7 @@ const ResourceCard = ({ article, className = '', eyebrow, presentation = 'defaul
 
   if (variant === 'rail') {
     return (
-      <a href={writingHref(article)} className={`group grid min-w-0 grid-cols-[8.5rem_1fr] overflow-hidden sm:grid-cols-[11rem_1fr] rounded-2xl border border-[#eaded0] bg-white shadow-lg shadow-zinc-900/5 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 ${!hasCover ? 'grid-cols-[13rem_1fr] sm:grid-cols-[16rem_1fr]' : ''} ${className}`}>
+      <a href={writingHref(article)} className={`group grid box-border w-full max-w-full min-w-0 grid-cols-[minmax(0,8.5rem)_minmax(0,1fr)] overflow-hidden sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] rounded-2xl border border-[#eaded0] bg-white shadow-lg shadow-zinc-900/5 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 ${!hasCover ? 'grid-cols-[minmax(0,13rem)_minmax(0,1fr)] sm:grid-cols-[minmax(0,16rem)_minmax(0,1fr)]' : ''} ${className}`}>
         <Cover article={article} className={hasCover ? 'min-h-[13rem] sm:min-h-[15rem]' : 'min-h-[22rem] sm:min-h-[25rem]'} />
         <span className="min-w-0 p-5 sm:p-6">
           <span className="text-[11px] font-black uppercase tracking-[0.16em] text-red-800 transition-colors duration-300 group-hover:text-red-700 dark:text-red-200 dark:group-hover:text-red-100">{eyebrow || articleAccent(article)}</span>
@@ -254,7 +254,7 @@ const ResourceCard = ({ article, className = '', eyebrow, presentation = 'defaul
   }
 
   return (
-    <a href={writingHref(article)} className={`group grid min-w-0 overflow-hidden rounded-2xl border border-[#eaded0] bg-white shadow-lg shadow-zinc-900/5 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 sm:grid-cols-[9rem_1fr] ${!hasCover ? 'sm:grid-cols-[17rem_1fr]' : ''} ${className}`}>
+    <a href={writingHref(article)} className={`group grid box-border w-full max-w-full min-w-0 overflow-hidden rounded-2xl border border-[#eaded0] bg-white shadow-lg shadow-zinc-900/5 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-900/10 active:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 dark:border-white/10 dark:bg-zinc-950 dark:shadow-black/40 dark:hover:shadow-black/50 sm:grid-cols-[minmax(0,9rem)_minmax(0,1fr)] ${!hasCover ? 'sm:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]' : ''} ${className}`}>
       <Cover article={article} className={hasCover ? 'min-h-44 sm:min-h-full' : 'min-h-[22rem] sm:min-h-full'} />
       <span className="min-w-0 p-5">
         <span className="text-[11px] font-black uppercase tracking-[0.16em] text-red-800 transition-colors duration-300 group-hover:text-red-700 dark:text-red-200 dark:group-hover:text-red-100">{eyebrow || articleAccent(article)}</span>

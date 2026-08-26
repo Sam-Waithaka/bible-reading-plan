@@ -176,6 +176,201 @@ max-w-6xl
 
 Avoid stretching content too wide.
 
+### Responsive Width Contract
+
+The page shell owns the width boundary.
+
+Every page should establish a responsive container that never exceeds the available viewport or parent width. Child sections and components must render within that boundary rather than calculating their own widths from the viewport.
+
+The sizing hierarchy should be:
+
+```text
+Viewport
+  ↓
+Page shell
+  ↓
+Shared content container
+  ↓
+Section
+  ↓
+Component
+  ↓
+Child/card
+```
+
+The page shell and major sections should generally respect:
+
+```tsx
+w-full
+max-w-full
+min-w-0
+box-border
+```
+
+A typical shared page container may use:
+
+```tsx
+mx-auto
+w-full
+max-w-[1440px]
+min-w-0
+px-4
+sm:px-6
+lg:px-8
+xl:px-12
+```
+
+Use project-specific max-widths where appropriate, but never allow ordinary page content to grow wider than its parent.
+
+#### Component Width Rules
+
+Components should respond to the width available from their parent.
+
+Prefer:
+
+```tsx
+w-full
+max-w-full
+min-w-0
+```
+
+Avoid viewport-derived child sizing such as:
+
+```tsx
+w-screen
+```
+
+or CSS equivalents such as:
+
+```css
+width: 100vw;
+width: calc(50vw - ...);
+```
+
+unless there is a deliberate full-bleed design reason.
+
+Nested flex and grid children that contain text or dynamic content should usually include:
+
+```tsx
+min-w-0
+```
+
+This is especially important for:
+
+* Long headings
+* Category names
+* Series names
+* Buttons
+* Metadata
+* Taxonomy controls
+* Cards inside flex/grid layouts
+
+Use wrapping utilities where needed:
+
+```tsx
+break-words
+```
+
+or, for unusually long unbroken content:
+
+```tsx
+[overflow-wrap:anywhere]
+```
+
+#### Responsive Decision Ownership
+
+The viewport determines the outer page width.
+
+Individual components then decide how best to render inside the space they receive.
+
+For example:
+
+```text
+Resource masonry:
+narrow container → 2 columns
+medium container → 2 larger columns
+wide container → 3 columns
+
+Taxonomy header:
+narrow container → stacked title and action
+wide container → title and action in one row
+
+Hero:
+narrow container → stacked
+wide container → split composition
+```
+
+Prefer Tailwind responsive utilities and container queries where they improve component independence.
+
+Example:
+
+```tsx
+<section className="@container w-full max-w-full min-w-0">
+```
+
+Then the component may respond to its own width rather than assuming a specific device:
+
+```tsx
+<div className="flex flex-col @lg:flex-row">
+```
+
+#### Overflow Rules
+
+Do not use:
+
+```tsx
+overflow-x-hidden
+overflow-x-clip
+```
+
+as the primary solution to oversized descendants.
+
+Overflow clipping may be used as a final defensive boundary, but the actual oversized child must first be corrected.
+
+When horizontal overflow appears, inspect for:
+
+* `w-screen`
+* fixed `min-w-*`
+* `w-fit` on long-content elements
+* `whitespace-nowrap`
+* negative horizontal margins
+* arbitrary fixed widths
+* viewport-based `calc(...)`
+* flex/grid children missing `min-w-0`
+* `width: 100%` combined with incompatible padding or positioning
+* intrinsic media widths that exceed the parent
+
+The goal is not to hide overflow.
+
+The goal is for every component to naturally fit within the width provided by its parent.
+
+#### Masonry and Card Layouts
+
+For masonry layouts, let the masonry container establish the column width.
+
+Cards should consume the width of the column naturally.
+
+Prefer:
+
+```tsx
+<div className="w-full min-w-0 columns-2 gap-3 md:gap-4 xl:columns-3">
+```
+
+with cards such as:
+
+```tsx
+<article className="mb-3 w-full max-w-full break-inside-avoid md:mb-4">
+```
+
+Avoid manually calculating individual card widths from the viewport.
+
+#### Core Rule
+
+> Constrain at the page level, adapt at the component level.
+
+A component should know how much space it has, not how wide the user's device is.
+
+
 ## 9. Logo Usage
 
 ### Primary Church Mark
