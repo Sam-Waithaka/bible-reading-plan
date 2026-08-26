@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import ResourceMasonry from '../components/resources/ResourceMasonry';
+import ResourceMasonry, { resourceGridColumnsClass } from '../components/resources/ResourceMasonry';
 import ResourcesContainer from '../components/resources/ResourcesContainer';
 import SiteFooter from '../components/SiteFooter';
 import SiteHeader from '../components/SiteHeader';
@@ -76,7 +76,7 @@ const SectionHeading = ({ title }: { title: string }) => (
 );
 
 const SkeletonGrid = () => (
-  <div className="grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+  <div className={`grid min-w-0 ${resourceGridColumnsClass} gap-5`}>
     {[0, 1, 2, 3].map((item) => <div key={item} className="h-36 animate-pulse rounded-2xl border border-black/10 bg-white/70 shadow-lg shadow-zinc-900/5 dark:border-white/10 dark:bg-[#171717]" />)}
   </div>
 );

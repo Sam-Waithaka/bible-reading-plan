@@ -4,7 +4,7 @@ import { ScriptureIcon } from '../../constants/siteIcons';
 import type { ReactNode } from 'react';
 import ResourcesCategoryTabs from './ResourcesCategoryTabs';
 import ResourceCard from './ResourceCard';
-import ResourceMasonry from './ResourceMasonry';
+import ResourceMasonry, { resourceGridColumnsClass, resourceMasonryColumnsClass } from './ResourceMasonry';
 import ResourcesContainer from './ResourcesContainer';
 import ResponsiveImage from '../media/ResponsiveImage';
 import SiteButton from '../ui/SiteButton';
@@ -206,7 +206,7 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
           {featuredCount} featured
         </p>
       </div>
-      <div className="box-border w-full max-w-full min-w-0 columns-2 gap-3 sm:gap-5 md:columns-2 xl:columns-3" data-resources-masonry-shelf="featured">
+      <div className={`box-border w-full max-w-full min-w-0 ${resourceMasonryColumnsClass} gap-3 sm:gap-5 xl:gap-7`} data-resources-masonry-shelf="featured">
         {articles.map((article) => <FeaturedWritingCard article={article} key={`article-${article.id}`} />)}
         {categories.map((category) => <FeaturedCategoryCard category={category} key={`category-${category.id}`} />)}
         {series.map((item) => <FeaturedSeriesCard series={item} key={`series-${item.id}`} />)}
@@ -217,7 +217,7 @@ const FeaturedShowcase = ({ articles, categories, series, loading }: { articles:
 
 const ArticleGrid = ({ articles, emptyText, loading }: { articles: PublicWritingCard[]; emptyText: string; loading: boolean }) => {
   if (loading) {
-    return <div className="grid box-border w-full max-w-full min-w-0 grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">{[0, 1, 2, 3].map((item) => <SkeletonBlock key={item} className="h-56 sm:h-72" />)}</div>;
+    return <div className={`grid box-border w-full max-w-full min-w-0 ${resourceGridColumnsClass} gap-3 sm:gap-5 xl:gap-7`}>{[0, 1, 2, 3].map((item) => <SkeletonBlock key={item} className="h-56 sm:h-72" />)}</div>;
   }
   if (!articles.length) return <EmptyState>{emptyText}</EmptyState>;
   return <ResourceMasonry articles={articles} shelf="latest" />;
