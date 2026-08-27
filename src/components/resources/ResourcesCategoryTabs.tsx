@@ -168,11 +168,11 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
               : 'border-black/10 bg-[#fffaf0] text-zinc-950 shadow-zinc-900/10 ring-1 ring-white/80 hover:bg-white focus:ring-offset-[#f8f5ef]'
           }`}
         >
-          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-red-800">
+          <span className="grid size-7 shrink-0 place-items-center text-red-800 dark:text-red-100">
             <ResourcesIcon size={15} aria-hidden="true" />
           </span>
           <span className="min-w-0 flex-1 truncate text-sm font-black">{activeCategory.label}</span>
-          <ChevronDown size={17} className="shrink-0 text-zinc-500 dark:text-stone-400" aria-hidden="true" />
+          <ChevronDown size={17} className="shrink-0 text-red-800 dark:text-red-100" aria-hidden="true" />
         </button>
       </div>
 
@@ -190,7 +190,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
             role="dialog"
             aria-modal="true"
             aria-labelledby={`${sheetId}-title`}
-            className={`absolute inset-x-0 bottom-0 box-border w-full max-w-full min-w-0 max-h-[min(78dvh,42rem)] overflow-hidden rounded-t-[2rem] border-t shadow-2xl ${
+            className={`absolute inset-x-0 bottom-0 box-border w-full max-w-full min-w-0 max-h-[50dvh] overflow-hidden rounded-t-[2rem] border-t shadow-2xl ${
               darkMode ? 'border-white/10 bg-[#0b0b0b] text-stone-100' : 'border-black/10 bg-[#fffaf0] text-zinc-950'
             }`}
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
@@ -209,7 +209,7 @@ const ResourcesCategoryTabs = ({ darkMode, resourceTypes = [] }: ResourcesCatego
                 <X size={20} aria-hidden="true" />
               </button>
             </div>
-            <nav className="box-border w-full max-w-full min-w-0 max-h-[calc(min(78dvh,42rem)-5.5rem)] overflow-y-auto overscroll-contain px-4 py-3" aria-label="Browse resource categories">
+            <nav className="box-border w-full max-w-full min-w-0 max-h-[calc(50dvh-5.5rem)] overflow-y-auto overscroll-contain px-4 py-3" aria-label="Browse resource categories">
               {categories.map((category, index) => {
                 const Icon = index === 0 ? Grid2X2 : FileText;
                 const isActive = category.key === activeCategory.key;
