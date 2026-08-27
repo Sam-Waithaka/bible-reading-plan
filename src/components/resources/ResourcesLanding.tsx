@@ -662,7 +662,7 @@ const ResourcesLanding = ({
   const resourceTypeRails = home?.resource_type_rails ?? [];
   const categoryRails = home?.category_rails ?? [];
   const seriesRails = home?.series_rails ?? [];
-  const latestPublication = home?.hero_featured || latestArticles[0] || null;
+  const latestPublication = latestArticles[0] ?? null;
   const scriptureBooks = home?.scripture_books.length
     ? home.scripture_books
     : (navigation?.scripture_books ?? []);

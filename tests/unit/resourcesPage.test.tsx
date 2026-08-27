@@ -163,7 +163,7 @@ describe('ResourcesPage', () => {
     expect(container.textContent).toContain('Youth Ministry');
     expect(container.textContent).toContain('Latest Publication');
     expect(container.textContent).toContain('Latest Grace');
-    expect(container.textContent).toContain('Hero Resource');
+    expect(container.textContent).not.toContain('Hero Resource');
     expect(container.querySelector('[data-resource-card-cover="editorial"]')).not.toBeNull();
   });
 
@@ -182,7 +182,7 @@ describe('ResourcesPage', () => {
       featured_articles: [],
       featured_categories: [],
       featured_series: [],
-      hero_featured: null,
+      hero_featured: article({ id: 43, slug: 'featured-stand-in', title: 'Featured Stand In' }),
       latest_articles: [article({ id: 44, slug: 'latest-stand-in', title: 'Latest Stand In' })],
       ministries: [],
       resource_type_rails: [],
@@ -194,6 +194,7 @@ describe('ResourcesPage', () => {
 
     await vi.waitFor(() => expect(container.textContent).toContain('Latest Stand In'));
     expect(container.textContent).toContain('Latest Publication');
+    expect(container.textContent).not.toContain('Featured Stand In');
     expect(container.textContent).not.toContain('No latest publication yet.');
   });
 
