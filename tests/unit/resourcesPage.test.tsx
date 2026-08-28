@@ -177,6 +177,25 @@ describe('ResourcesPage', () => {
     expect(container.querySelector('.animate-pulse')).not.toBeNull();
   });
 
+  it('renders Home content without waiting for Navigation', async () => {
+    mocks.fetchResourcesNavigation.mockReturnValueOnce(new Promise(() => undefined));
+
+    await renderPage(root);
+
+    await vi.waitFor(() => expect(container.textContent).toContain('Latest Grace'));
+    expect(container.textContent).toContain('Rail Devotion');
+  });
+
+  it('preserves successful Home content when Navigation fails', async () => {
+    mocks.fetchResourcesNavigation.mockRejectedValueOnce(new Error('Navigation unavailable'));
+
+    await renderPage(root);
+
+    await vi.waitFor(() => expect(container.textContent).toContain('Latest Grace'));
+    expect(container.textContent).toContain('Some library browsing options could not be loaded right now.');
+    expect(container.textContent).toContain('Rail Devotion');
+  });
+
   it('uses the latest article as the hero publication', async () => {
     mocks.fetchResourcesHome.mockResolvedValueOnce({
       featured_articles: [],

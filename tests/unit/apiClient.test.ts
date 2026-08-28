@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, apiGet, clearApiClientCaches, createApiUrl } from '../../src/services/apiClient';
+import { ApiError, apiGet, clearApiClientCaches, createApiUrl, invalidateApiCache } from '../../src/services/apiClient';
 
 const jsonResponse = (payload: unknown, init: ResponseInit = {}) =>
   new Response(JSON.stringify(payload), {
@@ -83,6 +83,44 @@ describe('apiClient', () => {
     await apiGet('/v1/bible/versions/', { cache: 'memory' });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('invalidates only memory-cache entries matching an API path prefix', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(jsonResponse({ source: 'resources-home-1' }))
+      .mockResolvedValueOnce(jsonResponse({ source: 'resources-navigation-1' }))
+      .mockResolvedValueOnce(jsonResponse({ source: 'media-home-1' }))
+      .mockResolvedValueOnce(jsonResponse({ source: 'resources-home-2' }))
+      .mockResolvedValueOnce(jsonResponse({ source: 'resources-navigation-2' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await apiGet('/v1/resources/home/', { cache: 'memory' });
+    await apiGet('/v1/resources/navigation/?category_slug=leadership', { cache: 'memory' });
+    await apiGet('/v1/audio-visual/home/', { cache: 'memory' });
+
+    invalidateApiCache('/v1/resources/');
+
+    await expect(apiGet('/v1/resources/home/', { cache: 'memory' })).resolves.toEqual({ source: 'resources-home-2' });
+    await expect(apiGet('/v1/resources/navigation/?category_slug=leadership', { cache: 'memory' })).resolves.toEqual({ source: 'resources-navigation-2' });
+    await expect(apiGet('/v1/audio-visual/home/', { cache: 'memory' })).resolves.toEqual({ source: 'media-home-1' });
+    expect(fetchMock).toHaveBeenCalledTimes(5);
+  });
+
+  it('still clears every memory-cache namespace', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(jsonResponse({ version: 1 }))
+      .mockResolvedValueOnce(jsonResponse({ version: 1 }))
+      .mockResolvedValueOnce(jsonResponse({ version: 2 }))
+      .mockResolvedValueOnce(jsonResponse({ version: 2 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await apiGet('/v1/resources/home/', { cache: 'memory' });
+    await apiGet('/v1/audio-visual/home/', { cache: 'memory' });
+    clearApiClientCaches();
+    await apiGet('/v1/resources/home/', { cache: 'memory' });
+    await apiGet('/v1/audio-visual/home/', { cache: 'memory' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(4);
   });
 
   it('allows caller-owned AbortSignal to cancel a request', async () => {

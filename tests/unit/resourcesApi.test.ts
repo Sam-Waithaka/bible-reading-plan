@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from '../../src/services/apiClient';
+import { clearApiClientCaches } from '../../src/services/apiClient';
 import { fetchPublicResourceDetail, fetchResourcesHome, fetchResourcesNavigation, fetchResourceTypeDetail, normalizeResourceTypeDetail, normalizeResourcesHome, normalizeResourcesNavigation } from '../../src/services/resourcesApi';
 
 const jsonResponse = (payload: unknown, init: ResponseInit = {}) =>
@@ -11,10 +12,12 @@ const jsonResponse = (payload: unknown, init: ResponseInit = {}) =>
 
 describe('resourcesApi', () => {
   beforeEach(() => {
+    clearApiClientCaches();
     vi.restoreAllMocks();
   });
 
   afterEach(() => {
+    clearApiClientCaches();
     vi.unstubAllGlobals();
   });
 
@@ -73,6 +76,29 @@ describe('resourcesApi', () => {
     expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('Authorization');
   });
 
+  it('reuses the memory-cached Resources Home response', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ latest_articles: [{ id: 12, title: 'Latest' }] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await fetchResourcesHome();
+    await fetchResourcesHome();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps Navigation query combinations as independent cache entries', async () => {
+    const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(jsonResponse({ resource_types: [] })));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await fetchResourcesNavigation({ category_slug: 'leadership' });
+    await fetchResourcesNavigation({ resource_type_slug: 'insights' });
+    await fetchResourcesNavigation({ category_slug: 'leadership' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(1, '/v1/resources/navigation/?category_slug=leadership', expect.any(Object));
+    expect(fetchMock).toHaveBeenNthCalledWith(2, '/v1/resources/navigation/?resource_type_slug=insights', expect.any(Object));
+  });
+
   it('normalizes resource type detail payloads for focused tab views', () => {
     expect(normalizeResourceTypeDetail({
       resource_type: { id: 1, name: 'Bible Study', slug: 'bible-study' },
@@ -113,6 +139,22 @@ describe('resourcesApi', () => {
     expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('Authorization');
   });
 
+  it('memory-caches resource type detail while keeping encoded slugs and pages distinct', async () => {
+    const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(jsonResponse({
+      resource_type: { id: 1, name: 'Bible Study', slug: 'bible-study' },
+      articles: { count: 0, next: null, previous: null, results: [] },
+    })));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await fetchResourceTypeDetail('Bible study/notes', { page: 1, pageSize: 24 });
+    await fetchResourceTypeDetail('Bible study/notes', { page: 1, pageSize: 24 });
+    await fetchResourceTypeDetail('Bible study/notes', { page: 2, pageSize: 24 });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(1, '/v1/resources/type/Bible%20study%2Fnotes/?page=1&page_size=24', expect.any(Object));
+    expect(fetchMock).toHaveBeenNthCalledWith(2, '/v1/resources/type/Bible%20study%2Fnotes/?page=2&page_size=24', expect.any(Object));
+  });
+
   it('fetches public resource detail by slug and optional published_at without auth headers', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({
       id: 4,
@@ -131,6 +173,23 @@ describe('resourcesApi', () => {
       headers: { Accept: 'application/json' },
     }));
     expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('Authorization');
+  });
+
+  it('memory-caches public resource detail with each public publication timestamp as a separate key', async () => {
+    const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(jsonResponse({
+      id: 4,
+      slug: 'grace/for-today',
+      title: 'Grace for Today',
+    })));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await fetchPublicResourceDetail('grace/for-today', '2026-07-17T09:00:00Z');
+    await fetchPublicResourceDetail('grace/for-today', '2026-07-17T09:00:00Z');
+    await fetchPublicResourceDetail('grace/for-today', '2026-07-18T09:00:00Z');
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(1, '/v1/resources/grace%2Ffor-today/?published_at=2026-07-17T09%3A00%3A00Z', expect.any(Object));
+    expect(fetchMock).toHaveBeenNthCalledWith(2, '/v1/resources/grace%2Ffor-today/?published_at=2026-07-18T09%3A00%3A00Z', expect.any(Object));
   });
 
   it('fetches narrowed resources navigation without auth headers', async () => {

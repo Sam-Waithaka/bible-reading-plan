@@ -191,6 +191,16 @@ export const apiGet = async <T>(path: string, options: ApiRequestOptions = {}): 
   return request;
 };
 
+export const invalidateApiCache = (pathPrefix: string) => {
+  const endpointPrefix = createApiUrl(pathPrefix);
+
+  for (const endpoint of memoryCache.keys()) {
+    if (endpoint.startsWith(endpointPrefix)) {
+      memoryCache.delete(endpoint);
+    }
+  }
+};
+
 export const clearApiClientCaches = () => {
   inFlightRequests.clear();
   memoryCache.clear();

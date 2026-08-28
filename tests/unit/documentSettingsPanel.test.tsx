@@ -5,6 +5,7 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import DocumentSettingsPanel from '../../src/components/portal/writing/DocumentSettingsPanel';
+import { clearApiClientCaches } from '../../src/services/apiClient';
 
 const jsonResponse = (payload: unknown) => new Response(JSON.stringify(payload), {
   headers: { 'Content-Type': 'application/json' },
@@ -16,12 +17,14 @@ describe('DocumentSettingsPanel', () => {
   let root: Root;
 
   beforeEach(() => {
+    clearApiClientCaches();
     globalThis.IS_REACT_ACT_ENVIRONMENT = true;
     container = document.createElement('div');
     document.body.appendChild(container);
   });
 
   afterEach(() => {
+    clearApiClientCaches();
     act(() => root.unmount());
     container.remove();
     vi.unstubAllGlobals();
