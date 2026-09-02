@@ -345,7 +345,7 @@ const SiteNavigation = ({
       </div>
 
       <header className={`${sticky ? 'sticky top-0' : 'relative'} z-30 border-b backdrop-blur-xl transition-all duration-300 ${drawerOpen || compactSmallHeader ? 'max-md:max-h-0 max-md:-translate-y-full max-md:overflow-hidden max-md:border-b-0 max-md:opacity-0' : 'max-md:max-h-24 max-md:translate-y-0 max-md:opacity-100'} ${darkMode ? 'border-white/10 bg-black/75' : 'border-black/10 bg-[#f8f5ef]/85'}`}>
-        <div className="mx-auto grid w-full max-w-none grid-cols-[auto_1fr_auto] items-center gap-6 px-4 py-3 sm:px-6 xl:px-8">
+        <div className="relative mx-auto grid w-full max-w-none grid-cols-[auto_1fr_auto] items-center gap-6 px-4 py-3 sm:px-6 xl:px-8">
           <a href={churchWebsiteUrl} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-700" aria-label="Open the AIC Njoro Town website">
             <img src={assetPaths.circleLogo} alt="" className="size-12 shrink-0 rounded-2xl border border-red-900/15 bg-white object-contain p-1 shadow-sm" />
             <div className="min-w-0"><p className="truncate text-lg font-extrabold leading-tight sm:text-xl">A.I.C Njoro Town</p><p className={`truncate font-serif text-xs sm:text-sm ${darkMode ? 'text-stone-400' : 'text-zinc-600'}`}>Oh Come Let Us Worship - Psalm 95:6</p></div>
@@ -357,7 +357,7 @@ const SiteNavigation = ({
               <><nav className="flex items-center gap-1" aria-label="Site navigation">{topNavigationItems.map((item) => renderNavItem(item, 'top'))}</nav>{renderGiveButton('top')}</>
             )}
           </div>
-          <div className="flex shrink-0 items-center justify-end gap-3">
+          <div className="absolute right-4 top-1/2 flex -translate-y-1/2 shrink-0 items-center justify-end gap-3 xl:static xl:translate-y-0">
             {renderAccountMenu()}
             {!auth.user ? <button type="button" onClick={onToggleTheme} className={`hidden size-11 place-items-center rounded-full border xl:grid ${darkMode ? 'border-white/10 bg-white/10 text-stone-100' : 'border-black/10 bg-white text-zinc-700'}`} aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'}>{darkMode ? <Sun size={17} /> : <Moon size={17} />}</button> : null}
             <button type="button" onClick={(event) => openDrawer(event.currentTarget)} aria-hidden={compactSmallHeader || drawerOpen} tabIndex={compactSmallHeader || drawerOpen ? -1 : undefined} className={`grid size-11 place-items-center rounded-full border focus:outline-none focus:ring-2 focus:ring-red-700 xl:hidden ${darkMode ? 'border-white/10 bg-white/10 text-stone-100' : 'border-black/10 bg-white text-zinc-900'}`} aria-label="Open navigation menu"><Menu size={21} /></button>
