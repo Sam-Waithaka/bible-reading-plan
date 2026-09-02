@@ -6,6 +6,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import SiteNavigation from '../../src/components/navigation/SiteNavigation';
+import MobileBottomActionsProvider from '../../src/components/navigation/MobileBottomActionsProvider';
+import { usePageBottomAction } from '../../src/components/navigation/mobileBottomActionContext';
 import type { AuthUser } from '../../src/types/auth';
 
 const mocks = vi.hoisted(() => ({
@@ -40,13 +42,22 @@ describe('SiteNavigation', () => {
     act(() => root.unmount());
     container.remove();
     document.body.style.overflow = '';
+    vi.unstubAllGlobals();
   });
 
-  const renderAt = async (pathname: string) => {
+  const PageActionRegistration = () => {
+    usePageBottomAction();
+    return null;
+  };
+
+  const renderAt = async (pathname: string, pageAction = false) => {
     await act(async () => {
       root.render(
         <MemoryRouter initialEntries={[pathname]}>
-          <SiteNavigation darkMode={false} layout="top" onToggleTheme={vi.fn()} />
+          <MobileBottomActionsProvider>
+            <SiteNavigation darkMode={false} layout="top" onToggleTheme={vi.fn()} />
+            {pageAction ? <PageActionRegistration /> : null}
+          </MobileBottomActionsProvider>
         </MemoryRouter>,
       );
     });
@@ -66,6 +77,48 @@ describe('SiteNavigation', () => {
     root = createRoot(container);
     await renderAt('/give');
     expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
+  });
+
+  it('conceals the mobile Give action when the site footer enters the shared observer zone', async () => {
+    let emitIntersection: ((entries: Array<{ isIntersecting: boolean }>) => void) | undefined;
+    class IntersectionObserverMock {
+      constructor(callback: (entries: Array<{ isIntersecting: boolean }>) => void) {
+        emitIntersection = callback;
+      }
+      disconnect = vi.fn();
+      observe = vi.fn();
+    }
+    vi.stubGlobal('IntersectionObserver', IntersectionObserverMock);
+    const footer = document.createElement('footer');
+    footer.dataset.siteFooter = 'true';
+    document.body.appendChild(footer);
+
+    await renderAt('/');
+    const give = container.querySelector<HTMLAnchorElement>('a[aria-label="Give"]')!;
+    expect(give.className).toContain('opacity-100');
+    await act(async () => emitIntersection?.([{ isIntersecting: true }]));
+    expect(give.className).toContain('opacity-0');
+    expect(give.className).toContain('pointer-events-none');
+    footer.remove();
+  });
+
+  it.each(['/scripture', '/scripture/john/3'])('prohibits mobile Give on Scripture route %s', async (pathname) => {
+    await renderAt(pathname);
+    expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
+  });
+
+  it('uses standalone mode for Project 52 and paired mode when a page action registers', async () => {
+    await renderAt('/project52');
+    expect(container.querySelector('[data-mobile-bottom-action="give"]')?.getAttribute('data-mobile-bottom-action-mode')).toBe('standalone');
+    act(() => root.unmount());
+    root = createRoot(container);
+    await renderAt('/resources', true);
+    expect(container.querySelector('[data-mobile-bottom-action="give"]')?.getAttribute('data-mobile-bottom-action-mode')).toBe('paired');
+  });
+
+  it('uses paired mode for Media when its page control participates', async () => {
+    await renderAt('/media', true);
+    expect(container.querySelector('[data-mobile-bottom-action="give"]')?.getAttribute('data-mobile-bottom-action-mode')).toBe('paired');
   });
 
   it('locks scrolling, closes on Escape, and restores focus', async () => {

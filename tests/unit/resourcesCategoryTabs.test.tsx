@@ -3,6 +3,7 @@
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import ResourcesCategoryTabs from '../../src/components/resources/ResourcesCategoryTabs';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -35,7 +36,7 @@ describe('ResourcesCategoryTabs', () => {
   });
 
   it('supports a scalable desktop category list and an active floating label', async () => {
-    await act(async () => root.render(<ResourcesCategoryTabs darkMode resourceTypes={resourceTypes} />));
+    await act(async () => root.render(<MemoryRouter initialEntries={['/resources']}><ResourcesCategoryTabs darkMode resourceTypes={resourceTypes} /></MemoryRouter>));
 
     expect(container.querySelectorAll('a[href^="/resources/type/"]')).toHaveLength(12);
     const trigger = container.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]');
@@ -44,10 +45,11 @@ describe('ResourcesCategoryTabs', () => {
     expect(trigger?.getAttribute('aria-expanded')).toBe('false');
     expect(trigger?.className).toContain('bg-zinc-950');
     expect(trigger?.className).toContain('text-stone-100');
+    expect(container.querySelector('[data-mobile-bottom-action="page"]')).not.toBeNull();
   });
 
   it('opens an accessible sheet, closes with Escape, and restores trigger focus', async () => {
-    await act(async () => root.render(<ResourcesCategoryTabs darkMode={false} resourceTypes={resourceTypes} />));
+    await act(async () => root.render(<MemoryRouter initialEntries={['/resources']}><ResourcesCategoryTabs darkMode={false} resourceTypes={resourceTypes} /></MemoryRouter>));
     const trigger = container.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]')!;
     expect(trigger.className).toContain('bg-[#fffaf0]');
     expect(trigger.className).toContain('text-zinc-950');

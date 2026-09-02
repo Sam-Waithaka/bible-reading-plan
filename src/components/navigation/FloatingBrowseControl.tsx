@@ -1,6 +1,12 @@
 import { ChevronDown, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useNearSiteFooter } from '../../hooks/useNearSiteFooter';
+import {
+  useMobileBlockingOverlay,
+  usePageBottomAction,
+} from './mobileBottomActionContext';
+import { getMobilePageActionStyle, isMobileGiveRouteAllowed } from './mobileBottomActionPolicy';
 
 type FloatingBrowseControlProps = {
   children: (close: () => void) => ReactNode;
@@ -17,13 +23,16 @@ const focusableSelector =
   'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 const FloatingBrowseControl = ({ children, darkMode, dialogLabel, eyebrow, icon: Icon, title, triggerAriaLabel, triggerLabel }: FloatingBrowseControlProps) => {
+  const currentPathname = typeof window === 'undefined' ? '/' : window.location.pathname;
   const [open, setOpen] = useState(false);
-  const [nearFooter, setNearFooter] = useState(false);
+  const nearFooter = useNearSiteFooter();
   const [concealedWhileScrolling, setConcealedWhileScrolling] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const hasOpenedRef = useRef(false);
   const sheetId = useId();
+  usePageBottomAction();
+  useMobileBlockingOverlay(open);
 
   const closeSheet = useCallback(() => {
     setOpen(false);
@@ -36,14 +45,6 @@ const FloatingBrowseControl = ({ children, darkMode, dialogLabel, eyebrow, icon:
     }
     if (hasOpenedRef.current) window.requestAnimationFrame(() => triggerRef.current?.focus());
   }, [open]);
-
-  useEffect(() => {
-    const footer = document.querySelector('footer');
-    if (!footer || typeof IntersectionObserver === 'undefined') return undefined;
-    const observer = new IntersectionObserver(([entry]) => setNearFooter(entry.isIntersecting), { rootMargin: '0px 0px 88px 0px' });
-    observer.observe(footer);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     let previousScrollY = window.scrollY;
@@ -100,8 +101,8 @@ const FloatingBrowseControl = ({ children, darkMode, dialogLabel, eyebrow, icon:
 
   return (
     <>
-      <div className={`fixed inset-x-0 z-40 flex box-border w-full max-w-full min-w-0 justify-center px-4 transition duration-200 xl:hidden ${(nearFooter || concealedWhileScrolling) && !open ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'}`} style={{ bottom: 'calc(0.5rem + env(safe-area-inset-bottom))' }}>
-        <button ref={triggerRef} type="button" aria-label={triggerAriaLabel} aria-controls={sheetId} aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(true)} className={`flex min-h-12 w-auto max-w-full min-w-0 items-center gap-2.5 rounded-full border px-4 text-left shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 motion-reduce:transform-none ${darkMode ? 'border-white/15 bg-zinc-950 text-stone-100 shadow-black/40 ring-1 ring-white/5 focus:ring-offset-[#080808]' : 'border-black/10 bg-[#fffaf0] text-zinc-950 shadow-zinc-900/10 ring-1 ring-white/80 hover:bg-white focus:ring-offset-[#f8f5ef]'}`}>
+      <div data-mobile-bottom-action="page" className={`fixed z-40 flex box-border min-w-0 justify-start transition duration-200 xl:hidden ${(nearFooter || concealedWhileScrolling) && !open ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'}`} style={getMobilePageActionStyle(isMobileGiveRouteAllowed(currentPathname))}>
+        <button ref={triggerRef} type="button" aria-label={triggerAriaLabel} aria-controls={sheetId} aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(true)} className={`flex min-h-12 w-full max-w-sm min-w-0 items-center gap-2.5 rounded-full border px-4 text-left shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 motion-reduce:transform-none ${darkMode ? 'border-white/15 bg-zinc-950 text-stone-100 shadow-black/40 ring-1 ring-white/5 focus:ring-offset-[#080808]' : 'border-black/10 bg-[#fffaf0] text-zinc-950 shadow-zinc-900/10 ring-1 ring-white/80 hover:bg-white focus:ring-offset-[#f8f5ef]'}`}>
           <span className="grid size-7 shrink-0 place-items-center text-red-800 dark:text-red-100"><Icon size={15} aria-hidden="true" /></span>
           <span className="min-w-0 flex-1 truncate text-sm font-black">{triggerLabel}</span>
           <ChevronDown size={17} className="shrink-0 text-red-800 dark:text-red-100" aria-hidden="true" />
@@ -109,7 +110,7 @@ const FloatingBrowseControl = ({ children, darkMode, dialogLabel, eyebrow, icon:
       </div>
 
       {open ? (
-        <div className="fixed inset-0 z-50 box-border w-full max-w-full min-w-0 xl:hidden">
+        <div className="fixed inset-0 z-[65] box-border w-full max-w-full min-w-0 xl:hidden">
           <button type="button" className="absolute inset-0 size-full cursor-default bg-black/70 backdrop-blur-sm" aria-label={`Close ${dialogLabel}`} onClick={closeSheet} />
           <div ref={sheetRef} id={sheetId} role="dialog" aria-modal="true" aria-labelledby={`${sheetId}-title`} className={`absolute inset-x-0 bottom-0 box-border w-full max-w-full min-w-0 max-h-[50dvh] overflow-hidden rounded-t-[2rem] border-t shadow-2xl ${darkMode ? 'border-white/10 bg-[#0b0b0b] text-stone-100' : 'border-black/10 bg-[#fffaf0] text-zinc-950'}`} style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
             <div className="flex box-border w-full max-w-full min-w-0 items-center justify-between gap-4 border-b border-black/10 px-5 py-4 dark:border-white/10">

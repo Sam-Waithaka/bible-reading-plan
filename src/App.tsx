@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { CalendarDays, CircleHelp, Settings } from "lucide-react";
 import { Route, Routes } from "react-router-dom";
 import RouteTransition from "./components/routing/RouteTransition";
+import MobileBottomActionsProvider from "./components/navigation/MobileBottomActionsProvider";
 import RequireAuth from "./components/auth/RequireAuth";
 import { PortalToastProvider } from "./components/portal/PortalToast";
 import AboutPage from "./pages/AboutPage";
@@ -42,8 +43,9 @@ function App() {
       <AuthProvider>
         <Project52Provider>
           <ScriptureReaderProvider>
-            <RouteTransition>
-              <Routes>
+            <MobileBottomActionsProvider>
+              <RouteTransition>
+                <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
@@ -140,8 +142,9 @@ function App() {
                 />
                 <Route path="/scripture" element={<ScripturePage />} />
                 <Route path="*" element={<LandingPage />} />
-              </Routes>
-            </RouteTransition>
+                </Routes>
+              </RouteTransition>
+            </MobileBottomActionsProvider>
           </ScriptureReaderProvider>
         </Project52Provider>
       </AuthProvider>

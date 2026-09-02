@@ -13,9 +13,15 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { assetPaths } from '../../constants/assets';
 import { AccountIcon, GivingIcon, siteIcons } from '../../constants/siteIcons';
 import { useCompactHeader } from '../../hooks/useCompactHeader';
+import { useNearSiteFooter } from '../../hooks/useNearSiteFooter';
 import { useAuth } from '../../hooks/useAuth';
 import { canAccessWritingStudio } from '../../utils/permissions';
 import SignInModal from '../auth/SignInModal';
+import {
+  getMobileGiveMode,
+  mobileGiveActionStyle,
+} from './mobileBottomActionPolicy';
+import { useMobileBottomActions } from './mobileBottomActionContext';
 import {
   accountNavigationItems,
   giveNavigationItem,
@@ -64,12 +70,14 @@ const SiteNavigation = ({
   const [accountOpen, setAccountOpen] = useState(false);
   const [communityOpen, setCommunityOpen] = useState(true);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
+  const [fullscreenActive, setFullscreenActive] = useState(false);
   const drawerRef = useRef<HTMLElement | null>(null);
   const drawerCloseRef = useRef<HTMLButtonElement | null>(null);
   const drawerScrollRef = useRef<HTMLElement | null>(null);
   const drawerTriggerRef = useRef<HTMLElement | null>(null);
   const observedCompactHeader = useCompactHeader(layout === 'top' && compact === undefined, { observeNestedScroll: true });
   const compactSmallHeader = compact ?? observedCompactHeader;
+  const nearSiteFooter = useNearSiteFooter();
   const portalContext = location.pathname === '/portal' || location.pathname.startsWith('/portal/');
   const accountName = auth.user
     ? [auth.user.firstName, auth.user.lastName].filter(Boolean).join(' ') || auth.user.username || 'Account'
@@ -78,6 +86,12 @@ const SiteNavigation = ({
   const accountInitials = initialsFor(accountName);
   const avatarUrl = auth.user?.profile?.profilePhoto;
   const canEnterPortal = auth.hasPortalAccess;
+  const { hasBlockingOverlay, hasPageAction } = useMobileBottomActions();
+  const mobileGiveMode = getMobileGiveMode({
+    blocked: drawerOpen || signInOpen || hasBlockingOverlay || fullscreenActive,
+    hasPageAction,
+    pathname: location.pathname,
+  });
 
   const openDrawer = (trigger: HTMLElement) => {
     drawerTriggerRef.current = trigger;
@@ -124,6 +138,12 @@ const SiteNavigation = ({
       drawerTriggerRef.current?.focus();
     };
   }, [drawerOpen]);
+
+  useEffect(() => {
+    const updateFullscreenState = () => setFullscreenActive(Boolean(document.fullscreenElement));
+    document.addEventListener('fullscreenchange', updateFullscreenState);
+    return () => document.removeEventListener('fullscreenchange', updateFullscreenState);
+  }, []);
 
   const closeDrawer = () => setDrawerOpen(false);
 
@@ -365,8 +385,17 @@ const SiteNavigation = ({
         </div>
       </header>
 
-      {!portalContext && location.pathname !== '/give' && !drawerOpen && !signInOpen ? (
-        <Link to="/give" className={`fixed right-4 z-50 inline-flex min-h-12 items-center gap-2 rounded-full px-5 text-sm font-black shadow-xl focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 xl:hidden ${darkMode ? 'bg-[#fffaf0] text-zinc-950' : 'bg-[#080808] text-white'}`} style={{ bottom: 'calc(env(safe-area-inset-bottom) + 1rem)' }} aria-label="Give"><GivingIcon size={17} aria-hidden="true" /> Give</Link>
+      {mobileGiveMode !== 'hidden' ? (
+        <Link
+          to="/give"
+          data-mobile-bottom-action="give"
+          data-mobile-bottom-action-mode={mobileGiveMode}
+          className={`fixed z-[45] inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-black shadow-xl transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 xl:hidden ${nearSiteFooter ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'} ${darkMode ? 'bg-[#fffaf0] text-zinc-950' : 'bg-[#080808] text-white'}`}
+          style={{ ...mobileGiveActionStyle, width: 'var(--mobile-give-action-width)' }}
+          aria-label="Give"
+        >
+          <GivingIcon size={17} aria-hidden="true" /> Give
+        </Link>
       ) : null}
 
       {drawerOpen ? (

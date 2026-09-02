@@ -3,6 +3,7 @@
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import MediaCategoryTabs from '../../src/components/media/MediaCategoryTabs';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -28,7 +29,7 @@ describe('MediaCategoryTabs floating collections control', () => {
   });
 
   it('uses the Resources-anchored pill and accessible 50vh scrollable sheet', async () => {
-    await act(async () => root.render(<MediaCategoryTabs activeTab="all" darkMode={false} onTabChange={vi.fn()} />));
+    await act(async () => root.render(<MemoryRouter initialEntries={['/media']}><MediaCategoryTabs activeTab="all" darkMode={false} onTabChange={vi.fn()} /></MemoryRouter>));
     const trigger = container.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]')!;
 
     expect(trigger.textContent).toContain('All Media');
@@ -36,6 +37,7 @@ describe('MediaCategoryTabs floating collections control', () => {
     expect(trigger.className).toContain('rounded-full');
     expect(trigger.className).toContain('bg-[#fffaf0]');
     expect(trigger.querySelector('.lucide-circle-play')).not.toBeNull();
+    expect(container.querySelector('[data-mobile-bottom-action="page"]')).not.toBeNull();
 
     await act(async () => trigger.click());
     const dialog = container.querySelector<HTMLElement>('[role="dialog"]')!;
@@ -50,7 +52,7 @@ describe('MediaCategoryTabs floating collections control', () => {
 
   it('selects a collection and closes the sheet', async () => {
     const onTabChange = vi.fn();
-    await act(async () => root.render(<MediaCategoryTabs activeTab="all" darkMode onTabChange={onTabChange} />));
+    await act(async () => root.render(<MemoryRouter initialEntries={['/media']}><MediaCategoryTabs activeTab="all" darkMode onTabChange={onTabChange} /></MemoryRouter>));
     const trigger = container.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]')!;
     await act(async () => trigger.click());
     const sermons = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')).find((button) => button.textContent?.includes('Sermons'))!;

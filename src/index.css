@@ -10,6 +10,10 @@
 }
 
 :root {
+  --mobile-bottom-action-gutter: 1rem;
+  --mobile-bottom-action-gap: 0.625rem;
+  --mobile-bottom-action-offset: 0.75rem;
+  --mobile-give-action-width: 6.25rem;
   color-scheme: light;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -87,6 +91,12 @@ button {
   .project52-catchphrase,
   .route-transition {
     animation: none;
+  }
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --mobile-bottom-action-gutter: 1.5rem;
   }
 }
 .editor-paper-surface {
