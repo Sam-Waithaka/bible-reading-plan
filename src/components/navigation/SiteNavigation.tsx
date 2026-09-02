@@ -46,7 +46,7 @@ const mainSection = publicNavigationSections.find((section) => section.id === 'm
 const communitySection = publicNavigationSections.find((section) => section.id === 'community')!;
 const preferencesSection = publicNavigationSections.find((section) => section.id === 'preferences')!;
 const topNavigationItems = [...mainSection.items, ...communitySection.items];
-const sectionTitleTypographyClass = 'font-sans text-[11px] font-black uppercase tracking-[0.16em]';
+const sectionTitleTypographyClass = 'font-sans text-[11px] font-black uppercase leading-none tracking-[0.16em]';
 
 const initialsFor = (name: string) =>
   name
@@ -222,9 +222,13 @@ const SiteNavigation = ({
     </Link>
   );
 
+  const renderSectionTitleLabel = (label: string) => (
+    <span data-navigation-section-title className={sectionTitleTypographyClass}>{label}</span>
+  );
+
   const renderSectionTitle = (label: string, id: string, shape: 'drawer' | 'side') => (
-    <p id={`${shape}-nav-${id}`} className={`mb-2 px-2 ${sectionTitleTypographyClass} ${darkMode ? 'text-stone-500' : 'text-zinc-500'}`}>
-      {label}
+    <p id={`${shape}-nav-${id}`} className={`mb-2 px-2 ${darkMode ? 'text-stone-500' : 'text-zinc-500'}`}>
+      {renderSectionTitleLabel(label)}
     </p>
   );
 
@@ -236,9 +240,9 @@ const SiteNavigation = ({
           aria-expanded={open}
           aria-controls={`${shape}-nav-${section.id}-items`}
           onClick={toggle}
-          className={`mb-2 flex w-full items-center justify-between rounded-xl px-2 py-1 text-left ${sectionTitleTypographyClass} ${darkMode ? 'text-stone-500 hover:bg-white/5' : 'text-zinc-500 hover:bg-black/[0.03]'}`}
+          className={`mb-2 flex w-full items-center justify-between rounded-xl px-2 py-1 text-left ${darkMode ? 'text-stone-500 hover:bg-white/5' : 'text-zinc-500 hover:bg-black/[0.03]'}`}
         >
-          {section.label}
+          {renderSectionTitleLabel(section.label)}
           <ChevronDown className={`transition-transform ${open ? 'rotate-180' : ''}`} size={15} aria-hidden="true" />
         </button>
       ) : renderSectionTitle(section.label, section.id, shape)}
@@ -390,6 +394,16 @@ const SiteNavigation = ({
           <div className="absolute right-4 top-1/2 flex -translate-y-1/2 shrink-0 items-center justify-end gap-3 xl:static xl:translate-y-0">
             {renderAccountMenu()}
             {!auth.user ? <button type="button" onClick={onToggleTheme} className={`hidden size-11 place-items-center rounded-full border xl:grid ${darkMode ? 'border-white/10 bg-white/10 text-stone-100' : 'border-black/10 bg-white text-zinc-700'}`} aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'}>{darkMode ? <Sun size={17} /> : <Moon size={17} />}</button> : null}
+            {mobileGiveMode !== 'hidden' ? (
+              <Link
+                to="/give"
+                data-give-presentation="tablet-header"
+                className={`hidden min-h-11 items-center gap-2 rounded-full px-3.5 text-sm font-black shadow-md transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 md:inline-flex xl:hidden ${darkMode ? 'bg-[#fffaf0] text-zinc-950 shadow-white/10 focus:ring-offset-black hover:bg-white' : 'bg-[#080808] text-white shadow-zinc-950/20 focus:ring-offset-[#f8f5ef] hover:bg-[#111111]'}`}
+                aria-label="Give"
+              >
+                <GivingIcon size={16} aria-hidden="true" /> Give
+              </Link>
+            ) : null}
             <button type="button" onClick={(event) => openDrawer(event.currentTarget)} aria-hidden={compactSmallHeader || drawerOpen} tabIndex={compactSmallHeader || drawerOpen ? -1 : undefined} className={`grid size-11 place-items-center rounded-full border focus:outline-none focus:ring-2 focus:ring-red-700 xl:hidden ${darkMode ? 'border-white/10 bg-white/10 text-stone-100' : 'border-black/10 bg-white text-zinc-900'}`} aria-label="Open navigation menu"><Menu size={21} /></button>
           </div>
         </div>
@@ -400,7 +414,8 @@ const SiteNavigation = ({
           to="/give"
           data-mobile-bottom-action="give"
           data-mobile-bottom-action-mode={mobileGiveMode}
-          className={`fixed z-[45] inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-black shadow-xl transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 xl:hidden ${nearSiteFooter ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'} ${darkMode ? 'bg-[#fffaf0] text-zinc-950' : 'bg-[#080808] text-white'}`}
+          data-give-presentation="mobile-fab"
+          className={`fixed z-[45] inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-black shadow-xl transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 md:hidden ${nearSiteFooter ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'} ${darkMode ? 'bg-[#fffaf0] text-zinc-950' : 'bg-[#080808] text-white'}`}
           style={{ ...mobileGiveActionStyle, width: 'var(--mobile-give-action-width)' }}
           aria-label="Give"
         >

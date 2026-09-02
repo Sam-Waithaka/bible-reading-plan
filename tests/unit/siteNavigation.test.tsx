@@ -73,11 +73,12 @@ describe('SiteNavigation', () => {
 
   it('shows the mobile Give action on public routes but not the Give page', async () => {
     await renderAt('/');
-    expect(container.querySelector('a[aria-label="Give"]')).not.toBeNull();
+    expect(container.querySelector('[data-give-presentation="mobile-fab"]')).not.toBeNull();
+    expect(container.querySelector('[data-give-presentation="tablet-header"]')).not.toBeNull();
     act(() => root.unmount());
     root = createRoot(container);
     await renderAt('/give');
-    expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
+    expect(container.querySelector('[data-give-presentation]')).toBeNull();
   });
 
   it('conceals the mobile Give action when the site footer enters the shared observer zone', async () => {
@@ -95,7 +96,7 @@ describe('SiteNavigation', () => {
     document.body.appendChild(footer);
 
     await renderAt('/');
-    const give = container.querySelector<HTMLAnchorElement>('a[aria-label="Give"]')!;
+    const give = container.querySelector<HTMLAnchorElement>('[data-give-presentation="mobile-fab"]')!;
     expect(give.className).toContain('opacity-100');
     await act(async () => emitIntersection?.([{ isIntersecting: true }]));
     expect(give.className).toContain('opacity-0');
@@ -105,7 +106,7 @@ describe('SiteNavigation', () => {
 
   it.each(['/scripture', '/scripture/john/3'])('prohibits mobile Give on Scripture route %s', async (pathname) => {
     await renderAt(pathname);
-    expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
+    expect(container.querySelector('[data-give-presentation]')).toBeNull();
   });
 
   it('uses standalone mode for Project 52 and paired mode when a page action registers', async () => {
@@ -115,6 +116,8 @@ describe('SiteNavigation', () => {
     root = createRoot(container);
     await renderAt('/resources', true);
     expect(container.querySelector('[data-mobile-bottom-action="give"]')?.getAttribute('data-mobile-bottom-action-mode')).toBe('paired');
+    expect(container.querySelector('[data-give-presentation="mobile-fab"]')?.className).toContain('md:hidden');
+    expect(container.querySelector('[data-give-presentation="tablet-header"]')?.className).toContain('md:inline-flex');
   });
 
   it('uses paired mode for Media when its page control participates', async () => {
@@ -130,7 +133,7 @@ describe('SiteNavigation', () => {
     await act(async () => trigger.click());
     expect(container.querySelector('[role="dialog"]')).not.toBeNull();
     expect(document.body.style.overflow).toBe('hidden');
-    expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
+    expect(container.querySelector('[data-give-presentation]')).toBeNull();
     expect(container.querySelector('button[aria-controls="drawer-nav-community-items"]')?.getAttribute('aria-expanded')).toBe('true');
     expect(container.querySelector('button[aria-controls="drawer-nav-preferences-items"]')?.getAttribute('aria-expanded')).toBe('false');
     await act(async () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
@@ -154,6 +157,9 @@ describe('SiteNavigation', () => {
     expect(drawer.textContent).toContain('My Account');
     expect(drawer.textContent).toContain('Enter Portal');
     expect(drawer.textContent).not.toContain('Signed in');
+    const sectionTitles = Array.from(drawer.querySelectorAll<HTMLElement>('[data-navigation-section-title]'));
+    expect(sectionTitles.map((title) => title.textContent)).toEqual(['Main', 'Community', 'Account', 'Preferences']);
+    expect(new Set(sectionTitles.map((title) => title.className))).toHaveLength(1);
   });
 
   it('uses a separate Portal navigation context', async () => {
@@ -165,7 +171,7 @@ describe('SiteNavigation', () => {
     await renderAt('/portal');
     expect(container.textContent).toContain('Portal');
     expect(container.textContent).toContain('Back to Site');
-    expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
+    expect(container.querySelector('[data-give-presentation]')).toBeNull();
 
     const triggers = container.querySelectorAll<HTMLButtonElement>('button[aria-label="Open navigation menu"]');
     await act(async () => triggers[triggers.length - 1].click());

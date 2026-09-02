@@ -209,7 +209,7 @@ SiteSideNav.tsx
 
 `SiteNavigation` is the shared authority for top navigation, the mobile/tablet drawer, account controls, theme controls, Give action, and the Scripture/Project 52 side-navigation presentation.
 
-The full top navigation begins at 1280px. Below 1280px, the header uses the menu/drawer system so eight links, church identity, Give, account, and theme actions are not compressed into an unsuitable width. The dedicated Scripture/Project 52 side rail may begin at 1024px because it occupies a page column rather than competing inside the top header.
+The full top navigation begins at 1280px. Below 1280px, the header uses the menu/drawer system so eight links, church identity, Give, account, and theme actions are not compressed into an unsuitable width. On mobile below 768px, eligible public routes use the coordinated bottom Give FAB. From 768px until the full header begins, Give moves into the header immediately before the menu control and page-owned bottom actions stop reserving space for it. Scripture, Portal, and the Give route remain excluded by the shared route policy. The dedicated Scripture/Project 52 side rail may begin at 1024px because it occupies a page column rather than competing inside the top header.
 
 `RouteTransition` belongs to `src/components/routing/` because it coordinates route presentation rather than site navigation.
 

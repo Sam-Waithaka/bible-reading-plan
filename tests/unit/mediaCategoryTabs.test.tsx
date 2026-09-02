@@ -38,6 +38,7 @@ describe('MediaCategoryTabs floating collections control', () => {
     expect(trigger.className).toContain('bg-[#fffaf0]');
     expect(trigger.querySelector('.lucide-circle-play')).not.toBeNull();
     expect(container.querySelector('[data-mobile-bottom-action="page"]')).not.toBeNull();
+    expect(container.querySelector('[data-responsive-bottom-action="mobile-paired-tablet-centered"]')).not.toBeNull();
 
     await act(async () => trigger.click());
     const dialog = container.querySelector<HTMLElement>('[role="dialog"]')!;

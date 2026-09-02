@@ -101,7 +101,12 @@ const FloatingBrowseControl = ({ children, darkMode, dialogLabel, eyebrow, icon:
 
   return (
     <>
-      <div data-mobile-bottom-action="page" className={`fixed z-40 flex box-border min-w-0 justify-start transition duration-200 xl:hidden ${(nearFooter || concealedWhileScrolling) && !open ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'}`} style={getMobilePageActionStyle(isMobileGiveRouteAllowed(currentPathname))}>
+      <div
+        data-mobile-bottom-action="page"
+        data-responsive-bottom-action="mobile-paired-tablet-centered"
+        className={`fixed z-40 flex box-border min-w-0 justify-start transition duration-200 md:!left-1/2 md:!right-auto md:w-[min(24rem,calc(100%-3rem))] md:!-translate-x-1/2 md:justify-center xl:hidden ${(nearFooter || concealedWhileScrolling) && !open ? 'pointer-events-none translate-y-6 opacity-0' : 'translate-y-0 opacity-100'}`}
+        style={getMobilePageActionStyle(isMobileGiveRouteAllowed(currentPathname))}
+      >
         <button ref={triggerRef} type="button" aria-label={triggerAriaLabel} aria-controls={sheetId} aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(true)} className={`flex min-h-12 w-full max-w-sm min-w-0 items-center gap-2.5 rounded-full border px-4 text-left shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 motion-reduce:transform-none ${darkMode ? 'border-white/15 bg-zinc-950 text-stone-100 shadow-black/40 ring-1 ring-white/5 focus:ring-offset-[#080808]' : 'border-black/10 bg-[#fffaf0] text-zinc-950 shadow-zinc-900/10 ring-1 ring-white/80 hover:bg-white focus:ring-offset-[#f8f5ef]'}`}>
           <span className="grid size-7 shrink-0 place-items-center text-red-800 dark:text-red-100"><Icon size={15} aria-hidden="true" /></span>
           <span className="min-w-0 flex-1 truncate text-sm font-black">{triggerLabel}</span>

@@ -46,6 +46,7 @@ describe('ResourcesCategoryTabs', () => {
     expect(trigger?.className).toContain('bg-zinc-950');
     expect(trigger?.className).toContain('text-stone-100');
     expect(container.querySelector('[data-mobile-bottom-action="page"]')).not.toBeNull();
+    expect(container.querySelector('[data-responsive-bottom-action="mobile-paired-tablet-centered"]')).not.toBeNull();
   });
 
   it('opens an accessible sheet, closes with Escape, and restores trigger focus', async () => {
