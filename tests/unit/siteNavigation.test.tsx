@@ -152,7 +152,7 @@ describe('SiteNavigation', () => {
     expect(drawer.textContent).toContain('Home');
     expect(drawer.textContent).toContain('Resources');
     expect(drawer.textContent).toContain('My Account');
-    expect(drawer.textContent).toContain('Enter Staff Portal');
+    expect(drawer.textContent).toContain('Enter Portal');
     expect(drawer.textContent).not.toContain('Signed in');
   });
 
@@ -163,7 +163,7 @@ describe('SiteNavigation', () => {
       lastName: 'Member', permissions: [], phoneNumber: '', profile: null, username: 'staff',
     };
     await renderAt('/portal');
-    expect(container.textContent).toContain('Staff Portal');
+    expect(container.textContent).toContain('Portal');
     expect(container.textContent).toContain('Back to Site');
     expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
 
@@ -171,11 +171,12 @@ describe('SiteNavigation', () => {
     await act(async () => triggers[triggers.length - 1].click());
     const drawer = container.querySelector('[role="dialog"]')!;
     expect(drawer.textContent).toContain('Dashboard');
-    expect(drawer.textContent).not.toContain('Enter Staff Portal');
+    expect(drawer.textContent).not.toContain('Enter Portal');
     expect(drawer.textContent).not.toContain('Writing Studio');
     expect(drawer.textContent?.match(/My Account/g)).toHaveLength(1);
     expect(drawer.textContent).toContain('Profile');
     expect(drawer.textContent).toContain('Logout');
+    expect(drawer.textContent?.indexOf('Back to Site')).toBeLessThan(drawer.textContent?.indexOf('Dashboard') ?? -1);
     expect(drawer.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
     expect(drawer.querySelector('[aria-current="page"]')?.textContent).toContain('Dashboard');
   });
@@ -194,7 +195,7 @@ describe('SiteNavigation', () => {
     const active = drawer.querySelectorAll('[aria-current="page"]');
     expect(active).toHaveLength(1);
     expect(active[0].textContent).toContain('Writing Studio');
-    expect(drawer.textContent).not.toContain('Enter Staff Portal');
+    expect(drawer.textContent).not.toContain('Enter Portal');
   });
 
   it('does not expose the public Portal gateway without Portal capability', async () => {
@@ -205,6 +206,6 @@ describe('SiteNavigation', () => {
     await renderAt('/');
     const triggers = container.querySelectorAll<HTMLButtonElement>('button[aria-label="Open navigation menu"]');
     await act(async () => triggers[triggers.length - 1].click());
-    expect(container.querySelector('[role="dialog"]')?.textContent).not.toContain('Enter Staff Portal');
+    expect(container.querySelector('[role="dialog"]')?.textContent).not.toContain('Enter Portal');
   });
 });

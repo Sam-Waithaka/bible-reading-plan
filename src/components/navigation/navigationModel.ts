@@ -73,7 +73,7 @@ export const portalNavigationItem: NavigationItem = {
   href: '/portal',
   icon: siteIcons.dashboard,
   id: 'portal',
-  label: 'Enter Staff Portal',
+  label: 'Enter Portal',
   match: 'exact',
   type: 'route',
 };
