@@ -7,14 +7,12 @@ import {
   UsersRound,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { discoveryGridColumnsClass, discoveryMasonryColumnsClass } from "../../constants/responsive";
 import { ScriptureIcon } from "../../constants/siteIcons";
 import { useMemo, useState, type ReactNode } from "react";
 import ResourcesCategoryTabs from "./ResourcesCategoryTabs";
 import ResourceCard from "./ResourceCard";
-import ResourceMasonry, {
-  resourceGridColumnsClass,
-  resourceMasonryColumnsClass,
-} from "./ResourceMasonry";
+import ResourceMasonry from "./ResourceMasonry";
 import ResourcesContainer from "./ResourcesContainer";
 import ResponsiveImage from "../media/ResponsiveImage";
 import SiteButton from "../ui/SiteButton";
@@ -428,7 +426,7 @@ const FeaturedShowcase = ({
         </p>
       </div>
       <div
-        className={`box-border w-full max-w-full min-w-0 ${resourceMasonryColumnsClass} gap-3 sm:gap-5 xl:gap-7`}
+      className={`box-border w-full max-w-full min-w-0 ${discoveryMasonryColumnsClass} gap-3 sm:gap-5 xl:gap-7`}
         data-resources-masonry-shelf="featured"
       >
         {articles.map((article) => (
@@ -463,7 +461,7 @@ const ArticleGrid = ({
   if (loading) {
     return (
       <div
-        className={`grid box-border w-full max-w-full min-w-0 ${resourceGridColumnsClass} gap-3 sm:gap-5 xl:gap-7`}
+        className={`grid box-border w-full max-w-full min-w-0 ${discoveryGridColumnsClass} gap-3 sm:gap-5 xl:gap-7`}
       >
         {[0, 1, 2, 3].map((item) => (
           <SkeletonBlock key={item} className="h-56 sm:h-72" />
@@ -697,7 +695,7 @@ const ResourcesLanding = ({
       }`}
     >
       <section className="box-border w-full max-w-full min-w-0 border-b border-black/10 py-12 dark:border-white/10 sm:py-16 xl:py-20">
-        <ResourcesContainer className="xl:max-w-[1728px]">
+        <ResourcesContainer className="ultra:max-w-site-wide">
           <div
             className="grid box-border w-full max-w-full min-w-0 gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(36rem,0.95fr)] xl:items-center xl:gap-16"
             data-resources-hero-layout="two-column-tablet"

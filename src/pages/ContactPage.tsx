@@ -1,6 +1,6 @@
 import ContactIntro from '../components/contact/ContactIntro';
-import SiteFooter from '../components/SiteFooter';
-import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/navigation/SiteFooter';
+import SiteHeader from '../components/navigation/SiteHeader';
 import { useTheme } from '../hooks/useTheme';
 
 const ContactPage = () => {

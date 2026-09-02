@@ -10,8 +10,8 @@ import ScriptureFloatingControls from '../components/scripture/ScriptureFloating
 import ScriptureMobilePanels from '../components/scripture/ScriptureMobilePanels';
 import ScriptureReaderTopBar from '../components/scripture/ScriptureReaderTopBar';
 import ScriptureSidePanel from '../components/scripture/ScriptureSidePanel';
-import SiteHeader from '../components/SiteHeader';
-import SiteSideNav from '../components/SiteSideNav';
+import SiteHeader from '../components/navigation/SiteHeader';
+import SiteSideNav from '../components/navigation/SiteSideNav';
 import { useScriptureChapterMeta } from '../hooks/useScriptureChapterMeta';
 import { useScriptureReader } from '../hooks/useScriptureReader';
 import { useScriptureSearch } from '../hooks/useScriptureSearch';

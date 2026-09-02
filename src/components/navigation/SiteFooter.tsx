@@ -1,5 +1,5 @@
 import { Facebook, Instagram, Youtube } from 'lucide-react';
-import { assetPaths } from '../constants/assets';
+import { assetPaths } from '../../constants/assets';
 
 type SiteFooterProps = {
   darkMode: boolean;

@@ -1,4 +1,4 @@
-import { AccountIcon, GivingIcon, siteIcons } from '../constants/siteIcons';
+import { AccountIcon, GivingIcon, siteIcons } from '../../constants/siteIcons';
 import {
   ChevronDown,
   HelpCircle,
@@ -12,11 +12,11 @@ import {
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
-import SignInModal from './auth/SignInModal';
-import { assetPaths } from '../constants/assets';
+import SignInModal from '../auth/SignInModal';
+import { assetPaths } from '../../constants/assets';
 
-import { useCompactHeader } from '../hooks/useCompactHeader';
-import { useAuth } from '../hooks/useAuth';
+import { useCompactHeader } from '../../hooks/useCompactHeader';
+import { useAuth } from '../../hooks/useAuth';
 
 export type SiteNavPath =
   | '/'
@@ -135,7 +135,7 @@ const SiteNavigation = ({
   const getNavItemClass = (active: boolean, shape: 'side' | 'top' | 'drawer') => {
     const shapeClass = {
       side: 'flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-bold transition',
-      top: 'inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-bold transition',
+      top: 'inline-flex min-h-10 items-center gap-1.5 rounded-full px-2 text-xs font-bold transition 2xl:gap-2 2xl:px-3 2xl:text-sm',
       drawer: 'flex min-h-12 items-center gap-3 rounded-2xl border-l-4 px-4 text-sm font-bold transition',
     }[shape];
     const stateClass =
@@ -500,7 +500,7 @@ const SiteNavigation = ({
             </p>
           </div>
         </a>
-        <div className="hidden min-w-0 items-center justify-center gap-3 lg:flex">
+        <div className="hidden min-w-0 items-center justify-center gap-2 xl:flex 2xl:gap-3">
           <nav className="flex items-center gap-1" aria-label="Site navigation">
             {navItems.map((item) => renderNavItem(item, 'top'))}
           </nav>
@@ -508,7 +508,7 @@ const SiteNavigation = ({
         </div>
         <div className="flex shrink-0 items-center justify-end gap-3">
           {auth.user ? (
-            <div className="relative hidden lg:block">
+            <div className="relative hidden xl:block">
               <button
                 type="button"
                 onClick={() => setAccountOpen((current) => !current)}
@@ -594,7 +594,7 @@ const SiteNavigation = ({
             <button
               type="button"
               onClick={() => setSignInOpen(true)}
-              className={`hidden size-11 place-items-center rounded-full border transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 lg:grid ${
+              className={`hidden size-11 place-items-center rounded-full border transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 xl:grid ${
                 darkMode
                   ? 'border-white/10 bg-white/10 text-stone-100 focus:ring-offset-black hover:bg-white/15'
                   : 'border-black/10 bg-white text-zinc-700 shadow-sm focus:ring-offset-[#f8f5ef] hover:bg-[#fffaf0]'
@@ -608,7 +608,7 @@ const SiteNavigation = ({
             <button
               type="button"
               onClick={onToggleTheme}
-              className={`hidden size-11 place-items-center rounded-full border transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 lg:grid ${
+              className={`hidden size-11 place-items-center rounded-full border transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 xl:grid ${
                 darkMode
                   ? 'border-white/10 bg-white/10 text-stone-100 focus:ring-offset-black hover:bg-white/15'
                   : 'border-black/10 bg-white text-zinc-700 shadow-sm focus:ring-offset-[#f8f5ef] hover:bg-[#fffaf0]'
@@ -623,7 +623,7 @@ const SiteNavigation = ({
             onClick={() => setDrawerOpen(true)}
             aria-hidden={compactSmallHeader || drawerOpen}
             tabIndex={compactSmallHeader || drawerOpen ? -1 : undefined}
-            className={`grid size-11 shrink-0 place-items-center rounded-full border transition focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 lg:hidden ${
+            className={`grid size-11 shrink-0 place-items-center rounded-full border transition focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 xl:hidden ${
               darkMode
                 ? 'border-white/10 bg-white/10 text-stone-100 focus:ring-offset-black'
                 : 'border-black/10 bg-white text-zinc-900 shadow-sm focus:ring-offset-[#f8f5ef]'
@@ -637,7 +637,7 @@ const SiteNavigation = ({
       </header>
 
       {drawerOpen && (
-        <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+        <div className="fixed inset-0 z-[70] xl:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
           <button
             type="button"
             className="absolute inset-0 bg-black/45"

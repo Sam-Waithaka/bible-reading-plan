@@ -3,8 +3,8 @@ import LandingHero from '../components/landing/LandingHero';
 import HomeResourcesHighlight from '../components/landing/HomeResourcesHighlight';
 import LandingMediaHighlight from '../components/landing/LandingMediaHighlight';
 import Project52LandingSection from '../components/landing/Project52LandingSection';
-import SiteFooter from '../components/SiteFooter';
-import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/navigation/SiteFooter';
+import SiteHeader from '../components/navigation/SiteHeader';
 import { useTheme } from '../hooks/useTheme';
 
 const LandingPage = () => {

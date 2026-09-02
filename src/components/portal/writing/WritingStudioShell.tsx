@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { BookOpen, FileText, FolderOpen, LayoutDashboard, Menu, PenLine, X } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import SiteFooter from '../../SiteFooter';
-import SiteHeader from '../../SiteHeader';
+import SiteFooter from '../../navigation/SiteFooter';
+import SiteHeader from '../../navigation/SiteHeader';
 import { useAuth } from '../../../hooks/useAuth';
 import { useTheme } from '../../../hooks/useTheme';
 import {

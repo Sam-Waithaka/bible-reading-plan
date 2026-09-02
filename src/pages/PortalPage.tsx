@@ -11,8 +11,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import SiteFooter from "../components/SiteFooter";
-import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/navigation/SiteFooter";
+import SiteHeader from "../components/navigation/SiteHeader";
 import { portalSurface } from "../components/portal/portalSurface";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";

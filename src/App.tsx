@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Route, Routes } from "react-router-dom";
-import RouteTransition from "./components/RouteTransition";
+import RouteTransition from "./components/routing/RouteTransition";
 import RequireAuth from "./components/auth/RequireAuth";
 import { PortalToastProvider } from "./components/portal/PortalToast";
 import AboutPage from "./pages/AboutPage";

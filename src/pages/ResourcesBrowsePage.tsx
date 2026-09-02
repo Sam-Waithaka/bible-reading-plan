@@ -1,10 +1,11 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import ResourceMasonry, { resourceGridColumnsClass } from '../components/resources/ResourceMasonry';
+import ResourceMasonry from '../components/resources/ResourceMasonry';
 import ResourcesContainer from '../components/resources/ResourcesContainer';
-import SiteFooter from '../components/SiteFooter';
-import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/navigation/SiteFooter';
+import SiteHeader from '../components/navigation/SiteHeader';
+import { discoveryGridColumnsClass } from '../constants/responsive';
 import { useTheme } from '../hooks/useTheme';
 import { searchPublicWritings, type PublicSearchQuery } from '../services/publicSearchApi';
 import { fetchResourceTypeDetail } from '../services/resourcesApi';
@@ -76,7 +77,7 @@ const SectionHeading = ({ title }: { title: string }) => (
 );
 
 const SkeletonGrid = () => (
-  <div className={`grid min-w-0 ${resourceGridColumnsClass} gap-5`}>
+  <div className={`grid min-w-0 ${discoveryGridColumnsClass} gap-5`}>
     {[0, 1, 2, 3].map((item) => <div key={item} className="h-36 animate-pulse rounded-2xl border border-black/10 bg-white/70 shadow-lg shadow-zinc-900/5 dark:border-white/10 dark:bg-[#171717]" />)}
   </div>
 );

@@ -3,8 +3,8 @@ import { ArrowLeft, ArrowRight, Clock3, UserRound } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import SiteFooter from "../components/SiteFooter";
-import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/navigation/SiteFooter";
+import SiteHeader from "../components/navigation/SiteHeader";
 import ResourceRailRecommendationCard from "../components/resources/ResourceRailRecommendationCard";
 import ShareButton from "../components/share/ShareButton";
 import ShareLinks from "../components/share/ShareLinks";

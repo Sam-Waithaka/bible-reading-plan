@@ -17,6 +17,7 @@ import SiteButton from "../ui/SiteButton";
 type HomeResourcesHighlightProps = { darkMode: boolean };
 type HomeWritingCardProps = {
   article: PublicWritingCard;
+  layout: "pair" | "shelf" | "single";
   role: "anchor" | "supporting";
 };
 
@@ -27,7 +28,7 @@ const articleDescription = (article: PublicWritingCard) =>
 const articleAuthor = (article: PublicWritingCard) =>
   article.byline || article.author_display || "A.I.C Njoro Town";
 
-const HomeWritingCard = ({ article, role }: HomeWritingCardProps) => {
+const HomeWritingCard = ({ article, layout, role }: HomeWritingCardProps) => {
   const image = normalizeMediaAssetForDisplay(article.og_image_detail);
   const editorial = getEditorialCoverPresentation({
     categories: article.categories,
@@ -39,6 +40,7 @@ const HomeWritingCard = ({ article, role }: HomeWritingCardProps) => {
     (level) => level.kind === "category",
   )?.label;
   const isAnchor = role === "anchor";
+  const isPair = layout === "pair";
 
   if (image) {
     return (
@@ -47,13 +49,14 @@ const HomeWritingCard = ({ article, role }: HomeWritingCardProps) => {
         to={`/resources/${article.slug}`}
       >
         <span
-          className={`relative block min-h-0 min-w-0 overflow-hidden bg-zinc-900 ${isAnchor ? "basis-[48%]" : "basis-[56%]"}`}
+          className={`relative block min-w-0 overflow-hidden bg-zinc-900 ${isPair ? "aspect-[4/3] w-full shrink-0 sm:aspect-[16/10]" : `min-h-0 ${isAnchor ? "basis-[48%]" : "basis-[56%]"}`}`}
         >
           <ResponsiveImage
             alt=""
             asset={image}
             className="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-[1.03]"
             preset="card"
+            sizes={isPair ? "(max-width: 639px) calc(50vw - 2.5rem), (max-width: 1279px) calc(50vw - 4rem), 32vw" : undefined}
           />
           <span
             className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10"
@@ -67,21 +70,21 @@ const HomeWritingCard = ({ article, role }: HomeWritingCardProps) => {
           className={`flex min-h-0 min-w-0 flex-1 flex-col p-3.5 sm:p-5 ${isAnchor ? "justify-between" : ""}`}
         >
           <span
-            className={`block text-balance font-serif font-semibold leading-[1.02] [hyphens:none] [overflow-wrap:normal] [word-break:normal] ${isAnchor ? "line-clamp-4 text-[clamp(1rem,9cqi,1.75rem)]" : "line-clamp-3 text-[clamp(.9rem,7cqi,1.35rem)]"}`}
+            className={`block shrink-0 text-balance break-words font-serif font-semibold leading-[1.02] [hyphens:none] ${isPair ? "text-[clamp(1rem,8cqi,1.75rem)]" : isAnchor ? "line-clamp-4 text-[clamp(1rem,9cqi,1.75rem)] [overflow-wrap:normal] [word-break:normal]" : "line-clamp-3 text-[clamp(.9rem,7cqi,1.35rem)] [overflow-wrap:normal] [word-break:normal]"}`}
           >
             {article.title}
           </span>
-          {isAnchor && articleDescription(article) ? (
-            <span className="mt-3 line-clamp-4 text-xs leading-5 text-zinc-600 dark:text-stone-300 sm:line-clamp-none sm:text-sm">
+          {(isAnchor || isPair) && articleDescription(article) ? (
+            <span className={`${isPair ? "line-clamp-3" : "line-clamp-4"} mt-3 text-xs leading-5 text-zinc-600 dark:text-stone-300 sm:line-clamp-none sm:text-sm`}>
               {articleDescription(article)}
             </span>
           ) : null}
-          <span className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] font-semibold text-zinc-600 dark:text-stone-400 sm:text-xs">
+          <span className={`${isPair ? "mt-auto shrink-0 pt-3" : "mt-3"} flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] font-semibold text-zinc-600 dark:text-stone-400 sm:text-xs`}>
             <span className="inline-flex items-center gap-1.5">
               <Clock3 size={13} aria-hidden="true" />
               {article.reading_time_minutes || 1} min read
             </span>
-            {isAnchor ? (
+            {isAnchor || isPair ? (
               <span className="inline-flex min-w-0 items-center gap-1.5">
                 <UsersRound className="shrink-0" size={13} aria-hidden="true" />
                 <span className="truncate">{articleAuthor(article)}</span>
@@ -114,7 +117,7 @@ const HomeWritingCard = ({ article, role }: HomeWritingCardProps) => {
       />
 
       <span
-        className={`relative z-10 flex size-full min-w-0 flex-col ${isAnchor ? "p-5 pl-10 sm:p-7 sm:pl-12" : "p-4 sm:p-5"}`}
+        className={`relative z-10 flex size-full min-w-0 flex-col ${isPair ? "p-4 pl-9 sm:p-6 sm:pl-11" : isAnchor ? "p-5 pl-10 sm:p-7 sm:pl-12" : "p-4 sm:p-5"}`}
       >
         <span
           className="text-[9px] font-black uppercase tracking-[0.18em] sm:text-[10px]"
@@ -128,8 +131,8 @@ const HomeWritingCard = ({ article, role }: HomeWritingCardProps) => {
           aria-hidden="true"
         />
 
-        <span className="mt-auto min-w-0">
-          {category && isAnchor ? (
+        <span className={`${isPair ? "mt-5 flex flex-1 flex-col" : "mt-auto"} min-w-0`}>
+          {category && (isAnchor || isPair) ? (
             <span
               className="mb-3 block font-serif text-sm"
               style={{ color: editorial.palette.accent }}
@@ -138,23 +141,23 @@ const HomeWritingCard = ({ article, role }: HomeWritingCardProps) => {
             </span>
           ) : null}
           <span
-            className={`block text-balance font-serif font-semibold leading-[1.02] [hyphens:none] [overflow-wrap:normal] [word-break:normal] ${isAnchor ? "line-clamp-5 text-[clamp(1rem,10cqi,1.875rem)]" : "line-clamp-4 text-[clamp(.9rem,8cqi,1.45rem)]"}`}
+            className={`block shrink-0 text-balance break-words font-serif font-semibold leading-[1.02] [hyphens:none] ${isPair ? "text-[clamp(1rem,8cqi,1.75rem)]" : isAnchor ? "line-clamp-5 text-[clamp(1rem,10cqi,1.875rem)] [overflow-wrap:normal] [word-break:normal]" : "line-clamp-4 text-[clamp(.9rem,8cqi,1.45rem)] [overflow-wrap:normal] [word-break:normal]"}`}
           >
             {article.title}
           </span>
-          {isAnchor && articleDescription(article) ? (
-            <span className="mt-4 line-clamp-4 text-xs leading-5 text-stone-100/90 sm:line-clamp-none sm:text-sm sm:leading-6">
+          {(isAnchor || isPair) && articleDescription(article) ? (
+            <span className={`${isPair ? "line-clamp-3" : "line-clamp-4"} mt-4 text-xs leading-5 text-stone-100/90 sm:line-clamp-none sm:text-sm sm:leading-6`}>
               {articleDescription(article)}
             </span>
           ) : null}
           <span
-            className={`mt-4 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] font-semibold text-stone-100 sm:text-xs ${isAnchor ? "sm:mt-7" : ""}`}
+            className={`${isPair ? "mt-auto shrink-0 pt-4" : `mt-4 ${isAnchor ? "sm:mt-7" : ""}`} flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] font-semibold text-stone-100 sm:text-xs`}
           >
             <span className="inline-flex items-center gap-1.5">
               <Clock3 size={13} aria-hidden="true" />
               {article.reading_time_minutes || 1} min read
             </span>
-            {isAnchor ? (
+            {isAnchor || isPair ? (
               <span className="inline-flex min-w-0 items-center gap-1.5">
                 <UsersRound className="shrink-0" size={13} aria-hidden="true" />
                 <span className="truncate">{articleAuthor(article)}</span>
@@ -255,6 +258,11 @@ const HomeResourcesHighlight = ({ darkMode }: HomeResourcesHighlightProps) => {
       ? { kind: "writing" as const, writing: thirdWriting }
       : null;
   const hasFullShelf = loading || content?.layout === "shelf";
+  const shelfSizing = hasFullShelf
+    ? "min-h-[20rem] grid-rows-[1.08fr_.82fr] sm:min-h-[28rem] md:min-h-[31rem] xl:min-h-[34rem]"
+    : content?.layout === "pair"
+      ? "auto-rows-auto items-stretch"
+      : "min-h-[20rem] grid-rows-1 sm:min-h-[28rem] md:min-h-[31rem] xl:min-h-[34rem]";
 
   return (
     <section
@@ -263,7 +271,7 @@ const HomeResourcesHighlight = ({ darkMode }: HomeResourcesHighlightProps) => {
       id="resources-highlight"
     >
       <div
-        className={`mx-auto w-full max-w-[1440px] min-w-0 rounded-[1.75rem] border p-3 shadow-xl sm:p-6 lg:p-8 xl:max-w-[calc(100vw-2.5rem)] xl:p-12 ${darkMode ? "border-white/10 bg-[#11100e] shadow-black/40" : "border-[#e7ded0] bg-[#fcfaf6] shadow-zinc-900/10"}`}
+        className={`mx-auto w-full max-w-site min-w-0 rounded-[1.75rem] border p-3 shadow-xl sm:p-6 lg:p-8 xl:max-w-[calc(100vw-2.5rem)] xl:p-12 ${darkMode ? "border-white/10 bg-[#11100e] shadow-black/40" : "border-[#e7ded0] bg-[#fcfaf6] shadow-zinc-900/10"}`}
       >
         <div className="grid min-w-0 gap-6 lg:gap-8 xl:grid-cols-[minmax(0,1.42fr)_minmax(18rem,.78fr)] xl:items-stretch xl:gap-12">
           <div className="min-w-0 xl:order-2 xl:flex xl:flex-col xl:justify-center">
@@ -299,7 +307,7 @@ const HomeResourcesHighlight = ({ darkMode }: HomeResourcesHighlightProps) => {
           </div>
 
           <div
-            className={`grid min-h-[20rem] min-w-0 grid-cols-2 gap-2.5 sm:min-h-[28rem] sm:gap-3 md:min-h-[31rem] xl:order-1 xl:min-h-[34rem] xl:gap-4 ${hasFullShelf ? "grid-rows-[1.08fr_.82fr]" : "grid-rows-1"}`}
+            className={`grid min-w-0 grid-cols-2 gap-2.5 sm:gap-3 xl:order-1 xl:gap-4 ${shelfSizing}`}
           >
             {loading ? (
               <>
@@ -321,11 +329,11 @@ const HomeResourcesHighlight = ({ darkMode }: HomeResourcesHighlightProps) => {
                 <div
                   className={`${hasFullShelf ? "row-span-2" : supporting ? "" : "col-span-2"} min-w-0`}
                 >
-                  <HomeWritingCard article={anchor} role="anchor" />
+                  <HomeWritingCard article={anchor} layout={content.layout} role="anchor" />
                 </div>
                 {supporting ? (
                   <div className="min-w-0">
-                    <HomeWritingCard article={supporting} role="supporting" />
+                    <HomeWritingCard article={supporting} layout={content.layout} role="supporting" />
                   </div>
                 ) : null}
                 {lowerItem ? (
@@ -335,6 +343,7 @@ const HomeResourcesHighlight = ({ darkMode }: HomeResourcesHighlightProps) => {
                     ) : (
                       <HomeWritingCard
                         article={lowerItem.writing}
+                        layout={content.layout}
                         role="supporting"
                       />
                     )}

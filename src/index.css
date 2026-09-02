@@ -2,6 +2,13 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --breakpoint-wide: 90rem;
+  --breakpoint-ultra: 105rem;
+  --container-site: 90rem;
+  --container-site-wide: 108rem;
+}
+
 :root {
   color-scheme: light;
   font-family:

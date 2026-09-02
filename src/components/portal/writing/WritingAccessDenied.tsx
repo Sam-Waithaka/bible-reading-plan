@@ -1,6 +1,6 @@
 import { LockKeyhole } from 'lucide-react';
-import SiteFooter from '../../SiteFooter';
-import SiteHeader from '../../SiteHeader';
+import SiteFooter from '../../navigation/SiteFooter';
+import SiteHeader from '../../navigation/SiteHeader';
 import { useTheme } from '../../../hooks/useTheme';
 import { portalSurface } from '../portalSurface';
 

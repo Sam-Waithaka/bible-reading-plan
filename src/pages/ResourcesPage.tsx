@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import SiteFooter from '../components/SiteFooter';
-import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/navigation/SiteFooter';
+import SiteHeader from '../components/navigation/SiteHeader';
 import ResourcesLanding from '../components/resources/ResourcesLanding';
 import { useTheme } from '../hooks/useTheme';
 import { fetchResourcesHome, fetchResourcesNavigation } from '../services/resourcesApi';

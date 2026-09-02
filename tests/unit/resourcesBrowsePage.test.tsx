@@ -16,11 +16,11 @@ vi.mock('../../src/hooks/useTheme', () => ({
   useTheme: () => ({ darkMode: false, toggleTheme: vi.fn() }),
 }));
 
-vi.mock('../../src/components/SiteHeader', () => ({
+vi.mock('../../src/components/navigation/SiteHeader', () => ({
   default: () => <header>Site Header</header>,
 }));
 
-vi.mock('../../src/components/SiteFooter', () => ({
+vi.mock('../../src/components/navigation/SiteFooter', () => ({
   default: () => <footer>Site Footer</footer>,
 }));
 

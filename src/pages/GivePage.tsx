@@ -1,8 +1,8 @@
 import GiveHero from '../components/give/GiveHero';
 import GivingComingSoon from '../components/give/GivingComingSoon';
 import GivingInstructionsCard from '../components/give/GivingInstructionsCard';
-import SiteFooter from '../components/SiteFooter';
-import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/navigation/SiteFooter';
+import SiteHeader from '../components/navigation/SiteHeader';
 import { useTheme } from '../hooks/useTheme';
 
 const GivePage = () => {

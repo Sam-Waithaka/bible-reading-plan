@@ -2,317 +2,328 @@
 
 ## Overview
 
-This project is a static React SPA for A.I.C Njoro Town Church. It combines three user-facing experiences:
+This project is the React single-page application for A.I.C Njoro Town Church. It combines several connected experiences:
 
-- a church landing page
-- the Project 52 Bible reading plan
-- an interactive Scripture reader with search, sharing, comparison, and Bible tools
+- the public church homepage and institutional pages;
+- Project 52, the church Bible-reading plan;
+- an interactive Scripture reader with search, comparison, sharing, and Bible tools;
+- the public Resources library for writings, taxonomy browsing, Scripture relationships, ministries, and series;
+- the public Media library and media-watch experience;
+- authenticated member and staff portal experiences;
+- the Writing Studio editorial workflow.
 
-The frontend owns UI state, reading-plan schedule logic, routing, and presentation. Scripture text and metadata are loaded from the Scripture API through a single service module.
+The frontend owns routing, presentation, responsive composition, client state, Project 52 schedule logic, authentication lifecycle integration, and public/editorial API orchestration. Backend services remain authoritative for published content, media, taxonomy, permissions, and account data.
 
-## Goals
+## Design and Engineering Principles
 
-- Make Project 52 readings open directly in the Scripture reader.
-- Keep one authority for Scripture rendering: `openScripture(request)`.
-- Avoid conflicting render paths between Project 52, URL query params, sidebar controls, and floating controls.
-- Keep Bible reference controls and Bible version controls modular.
-- Support phase-one church deployment as a static app.
-- Preserve room for backend expansion into more Bible versions and languages.
-
-## Non-Goals
-
-- User accounts.
-- Server-side rendering.
-- Persisted reading completion state.
-- Offline Scripture storage.
-- Backend administration UI.
+- Preserve the A.I.C Njoro Town design language documented in `docs/design-language.md`.
+- Keep public and authenticated data flows separate.
+- Use one shared HTTP client for public JSON GET requests where the contract allows it.
+- Prefer modular feature components over large route components.
+- Centralize cross-feature layout vocabulary without forcing every feature into the same composition.
+- Keep DOM order, keyboard behavior, focus management, reduced motion, and touch targets accessible.
+- Preserve backend routes and contracts unless a backend change is explicitly part of the task.
+- Treat mobile, tablet, desktop, and large desktop as intentional compositions rather than scaled copies.
 
 ## Runtime Architecture
 
 ```text
 Browser
   |
-  | React Router
+  | BrowserRouter + RouteTransition
   v
-Routes
-  /             -> LandingPage
-  /project52    -> Project52Page
-  /scripture    -> ScripturePage
+Public routes                           Protected routes
+  Landing / Scripture / Project 52       RequireAuth
+  Resources / Media / church pages         |
+                                            v
+                                      PortalToastProvider
+                                      Portal / Writing Studio
   |
   v
-Providers
+Application providers
+  ThemeProvider
+  AuthProvider
   Project52Provider
   ScriptureReaderProvider
   |
   v
-Services
-  scriptureApi.ts -> Scripture API
+Service layer
+  apiClient
+  authApi / authSession
+  scriptureApi
+  resourcesApi / publicSearchApi
+  audioVisualApi / mediaAssetsApi
+  writingApi
+  |
+  v
+Backend APIs and optimized media assets
 ```
+
+The application is mounted in React `StrictMode`. Development effects may therefore run more than once; services and effects must remain abort-safe and retry-safe.
 
 ## Routing
 
+### Public routes
+
 | Route | Responsibility |
-|---|---|
-| `/` | Branded church landing page |
-| `/project52` | Full Project 52 plan, PDF export, search/filtering |
-| `/scripture` | Scripture reader, Project 52 widget, Bible tools, search, comparison |
+| --- | --- |
+| `/` | Church homepage and public highlights |
+| `/about` | Church information |
+| `/contact` | Contact information |
+| `/give` | Giving information |
+| `/ministries` | Ministry discovery |
+| `/project52` | Full Project 52 reading plan |
+| `/scripture` | Scripture reader, Project 52 widget, search, comparison, and tools |
+| `/media` | Public media discovery and collections |
+| `/media/watch/:slug` | Media playback/detail experience |
+| `/resources` | Public editorial Resources library |
+| `/resources/type/:slug` | Resource-type detail and browse view |
+| `/resources/category/:slug` | Category-filtered public writings |
+| `/resources/series/:slug` | Series-filtered public writings |
+| `/resources/book/:osisId` | Writings connected to a Scripture book |
+| `/resources/ministry/:slug` | Writings connected to a ministry |
+| `/resources/:slug` | Public writing detail |
 
-The app is deployed as a static SPA. Refresh fallback is handled by `public/_redirects`.
+### Protected routes
 
-## State Ownership
+| Route | Responsibility |
+| --- | --- |
+| `/portal` | Authenticated portal dashboard |
+| `/portal/writing` | Writing Studio entry point |
+| `/portal/writing/articles` | Writing library/article management |
+| `/portal/writing/new` | New writing workflow |
+| `/portal/writing/library` | Writing taxonomy and library management |
+| `/portal/writing/editorial` | Editorial workflow |
+| `/portal/writing/:id` | Writing editor |
+
+Protected routes are wrapped by `RequireAuth` and `PortalToastProvider`. Unknown routes currently fall back to the landing page. Static-host refresh fallback is provided by `public/_redirects`.
+
+## Application Providers and State Ownership
+
+### Theme
+
+`ThemeProvider` owns the light/dark theme. Shared navigation, public pages, portal surfaces, sheets, and floating controls consume the same theme state.
+
+### Authentication
+
+`AuthProvider` and the auth store own the session lifecycle, current user, sign-in/sign-out actions, and token-backed access used by protected services. Public service responses must never cache privileged, draft, or user-specific payloads under public cache keys.
 
 ### Project 52
 
-`Project52Provider` owns:
+`Project52Provider` owns the current reading target, reading week, generated reading weeks, and rotating catchphrase. Static plan content lives under `src/data/`.
 
-- current reading target
-- current reading week
-- built reading weeks
-- active rotating catchphrase
-
-`project52Schedule.ts` owns the date rules:
-
-- Week 1 starts on the first Monday of the year.
-- Monday-Friday map to reading days.
-- Saturday/Sunday use weekend catch-up for the current week.
-- The Scripture widget uses `Previous / Today / Next` reading sequence tabs.
-- Week 1 and Week 52 edges are clamped.
+The schedule rules include weekday reading assignment, weekend catch-up, current-week navigation, and clamped Week 1/Week 52 boundaries.
 
 ### Scripture Reader
 
-`ScriptureReaderProvider` owns durable reader selection state:
-
-- selected version
-- selected book
-- selected chapter
-- selected verse
-- pending external reference
-
-`useScriptureReader()` owns loaded API collections:
-
-- versions
-- books
-- chapters
-- verses
-- loading flags
-- errors
-
-The public render authority is:
+`ScriptureReaderProvider` owns durable reader selection state. The public rendering authority is:
 
 ```ts
 openScripture(request)
 ```
 
-All opening paths should pass a JavaScript object to this function:
+Project 52 links, URL parameters, chapter controls, reference pickers, and Scripture tools should converge on that action rather than creating competing render paths.
 
-- Project 52 tile clicks
-- Project 52 widget clicks
-- floating chapter controls
-- sidebar book/chapter controls
-- URL query param references
+## Service and HTTP Architecture
 
-## Scripture Rendering Flow
+### Shared public API client
 
-### Direct Selection
+`src/services/apiClient.ts` provides:
 
-```text
-User chooses version/book/chapter
-  -> openScripture({ versionId/bookId/chapterId })
-  -> useScriptureReader loads dependent data
-  -> ScriptureDisplay renders verses
-```
+- API base-URL construction;
+- JSON parsing;
+- consistent timeout and error handling;
+- in-flight reuse for requests without a caller-owned `AbortSignal`;
+- opt-in application-memory caching;
+- targeted cache invalidation.
 
-### Project 52 Reading
+Memory caching has no TTL. Entries remain until a browser reload/application restart, `clearApiClientCaches()`, or targeted invalidation. Requests carrying an `AbortSignal` are intentionally not deduplicated so one consumer cannot cancel another consumer's request. Successful memory-cache hits remain available to signalled callers.
 
-```text
-User clicks Project 52 reading
-  -> useOpenProject52Reading()
-  -> openScripture({ book, chapter })
-  -> navigate('/scripture') when needed
-  -> pendingReference resolves against loaded books/chapters
-  -> verses load by reference
-  -> pendingReference clears
-```
+### Resources public reads
 
-### URL Reference
+The `/v1/resources/*` public read layer uses `apiGet(..., { cache: 'memory' })`:
 
 ```text
-/scripture?book=John&chapter=20&verses=1-2&version=BSB
-  -> useScriptureReader reads search params
-  -> openScripture({ book, chapter, verses, versionId })
-  -> pendingReference resolves
-  -> selected verses are highlighted/actionable
+/v1/resources/home/
+/v1/resources/navigation/
+/v1/resources/type/:slug/?page=...&page_size=...
+/v1/resources/:slug/?published_at=...
 ```
 
-## API Service
+The complete URL is the cache key, so filters, pages, slugs, and public publication timestamps remain independent. `invalidateResourcesCache()` clears the `/v1/resources/*` namespace after relevant successful public-facing mutations.
 
-All Scripture API calls are centralized in:
+Home, Navigation, resource types, categories, series, Scripture-book relationships, and ministry relationships are carried through the public Resources aggregate contracts. Category-, series-, book-, and ministry-filtered article grids use `/v1/search/writings/`. That generic search endpoint uses the shared client but is not placed under the Resources memory-cache policy because it is also used by general/editorial search and may receive tag-related filters.
+
+Tags remain intentionally outside the public Resources memory-cache migration.
+
+### Writing Studio
+
+`writingApi.ts` owns authenticated writing, workflow, taxonomy, relationship, scheduling, publishing, featuring, and editorial operations. Successful mutations that affect public Resources invalidate the public Resources namespace. Draft-only reads and privileged responses remain outside public caching.
+
+### Scripture
+
+`scriptureApi.ts` and `scriptureNormalizers.ts` own Scripture URL construction, tolerant response normalization, comparison, lookup, search, notes, markers, glossary, and resource requests. The frontend accepts several transitional backend shapes, but stable backend contracts remain the long-term goal.
+
+### Media
+
+`audioVisualApi.ts` owns public audiovisual data, while `mediaAssetsApi.ts` normalizes media assets and responsive variants. The player supports large HLS/DASH dependencies. These currently create large production chunks and are a priority for route/player-level lazy loading rather than eager loading from non-media routes.
+
+## Public Resources Composition
+
+The Resources page separates content discovery from structured navigation:
+
+- editorial hero and latest publication;
+- featured and latest writing shelves;
+- responsive masonry discovery;
+- resource-type, category, and series relationships;
+- Browse Scripture and Browse Ministry structured lists;
+- public writing detail pages.
+
+Generated editorial covers and photographic cards retain distinct visual species. Their content and aspect ratios must not be forced into one uniform card height.
+
+The homepage Resources highlight uses the same Resources Home response but applies its own selection semantics. It promotes the latest publication as the anchor, may add supporting writings and a featured Series, and displays a loading shell while the initial request is pending.
+
+## Media Composition
+
+The Media page owns collection filtering, featured/latest media, series, music subcategories, and the watch experience. On mobile and tablet, Media and Resources share `FloatingBrowseControl`, including:
+
+- compact floating pill presentation;
+- footer avoidance and scroll-direction concealment;
+- safe-area positioning;
+- 50dvh bottom-sheet limit and internal scrolling;
+- focus trapping, Escape handling, and trigger-focus restoration.
+
+Each feature supplies its own taxonomy items and selection behavior to the shared shell.
+
+## Navigation and Application Shell
+
+Shared site chrome lives in `src/components/navigation/`:
 
 ```text
-src/services/scriptureApi.ts
+FloatingBrowseControl.tsx
+SiteFooter.tsx
+SiteHeader.tsx
+SiteNavigation.tsx
+SiteSideNav.tsx
 ```
 
-The service provides:
+`SiteNavigation` is the shared authority for top navigation, the mobile/tablet drawer, account controls, theme controls, Give action, and the Scripture/Project 52 side-navigation presentation.
 
-- request URL construction
-- response unwrapping
-- tolerant field mapping
-- query string building
-- book reference normalization
-- in-memory request caching for duplicate identical requests
+The full top navigation begins at 1280px. Below 1280px, the header uses the menu/drawer system so eight links, church identity, Give, account, and theme actions are not compressed into an unsuitable width. The dedicated Scripture/Project 52 side rail may begin at 1024px because it occupies a page column rather than competing inside the top header.
 
-The request cache exists because React `StrictMode` in development intentionally double-runs mount effects. Duplicate same-URL requests reuse the same promise. Failed requests are removed from the cache to allow retries.
+`RouteTransition` belongs to `src/components/routing/` because it coordinates route presentation rather than site navigation.
 
-## Scripture API Endpoints Consumed
+## Responsive Layout System
 
-| Function | Endpoint |
-|---|---|
-| `getBibleVersions()` | `GET /v1/bible/versions/` |
-| `getBibleBooks(version)` | `GET /v1/bible/versions/:version/books/` |
-| `getBibleChapters(version, book)` | `GET /v1/bible/versions/:version/books/:book/chapters/` |
-| `getBibleVerses(version, book, chapter)` | `GET /v1/bible/versions/:version/books/:book/chapters/:chapter/` |
-| `getBibleVersesByReference(version, book, chapter)` | same chapter endpoint, with frontend book-name normalization |
-| `lookupBibleVerse(version, book, chapter, verse)` | `GET /v1/bible/versions/:version/verses/:book/:chapter/:verse/` |
-| `compareBibleChapter(versions, book, chapter)` | `GET /v1/bible/compare/?versions=BSB,ASV&book=John&chapter=20` |
-| `searchBible(params)` | `GET /v1/bible/search/?q=...` |
-| `getBibleResources(version, type)` | `GET /v1/bible/versions/:version/resources/?type=...` |
-| `getBibleGlossary(version, q)` | `GET /v1/bible/versions/:version/glossary/?q=...` |
-| `getBibleMarkers(version, status)` | `GET /v1/bible/versions/:version/markers/?status=...` |
-| `getBibleNotes(version, type)` | `GET /v1/bible/versions/:version/notes/?type=...` |
+The site uses one shared set of viewport modes. Desktop expands the composition, tablet reorganizes it, and mobile prioritizes it. Components remain responsible for their own internal layouts; the shared vocabulary prevents scattered numeric media queries.
 
-## Response Tolerance
+| Mode | Tailwind variant | Width |
+| --- | --- | --- |
+| Mobile | base | below 768px |
+| Tablet | `md:` | 768–1023px |
+| Small desktop | `lg:` | 1024–1279px |
+| Desktop | `xl:` | 1280–1439px |
+| Large desktop | `wide:` | 1440–1679px |
+| Very large desktop | `ultra:` | 1680px and above |
 
-The frontend accepts several response shapes while the API stabilizes:
+The custom `wide` and `ultra` breakpoints are defined in `src/index.css` through Tailwind's `@theme` configuration.
 
-- top-level arrays
-- `{ data: [...] }`
-- `{ items: [...] }`
-- `{ results: [...] }`
-- `{ versions: [...] }`
-- `{ books: [...] }`
-- `{ chapters: [...] }`
-- `{ verses: [...] }`
+### Shared boundaries and gutters
 
-For chapter text, it looks for verse collections and common text fields such as:
-
-- `text`
-- `content`
-- `verseText`
-- `body`
-
-For version/book/chapter metadata, it accepts common alternatives such as:
-
-- `abbreviation`, `abbr`, `code`
-- `osis_id`, `osisId`, `bookId`, `id`
-- `number`, `chapter`, `chapterNumber`, `order`
-
-This tolerance is useful during backend iteration, but the backend team should still converge on stable contracts.
-
-## Comparison Design
-
-The comparison modal is shared by:
-
-- Scripture action sheet compare verse/selection/chapter
-- Bible Tools compare tool
-
-The modal receives:
-
-- comparison data
-- selected comparison versions
-- optional highlighted verse numbers
-- optional book/chapter navigation data
-
-It supports:
-
-- selectable comparison versions
-- one-or-more selected verses highlighted
-- scroll to first highlighted verse
-- book/chapter changes inside the modal
-- outside-click close
-- close-on-Escape
-
-The modal does not fetch directly. Its parent owns comparison loading and passes the result back into the modal.
-
-## Shared UI Modules
-
-| Module | Purpose |
-|---|---|
-| `ScriptureReferencePickers.tsx` | book picker and chapter picker primitives |
-| `ScriptureReferencePickerGroup.tsx` | shared book/chapter picker group |
-| `BibleVersionPickerList.tsx` | shared single/multi Bible version list and availability note |
-| `ScriptureVersionSelect.tsx` | mobile/compact single-version selector |
-| `ScriptureComparisonModal.tsx` | shared chapter comparison modal |
-| `ScriptureActionSheet.tsx` | selected verse/selection actions |
-| `BibleToolsPanel.tsx` | container for Bible tools |
-
-## Project 52 Design
-
-Project 52 data is static frontend data:
+`src/components/layout/PageContainer.tsx` is the standard centered page boundary. It provides:
 
 ```text
-src/data/project52Readings.ts
-src/data/project52Catchphrases.ts
+w-full max-w-full min-w-0 box-border
+max width: 1440px
+mobile gutter: 16px
+small-screen gutter: 24px
+small-desktop gutter: 32px
+desktop gutter: 48px
 ```
 
-Important behavior:
+The corresponding reusable class vocabulary lives in `src/constants/responsive.ts`:
 
-- Full plan route displays all weeks.
-- Current week opens and scrolls into view.
-- Current day is highlighted.
-- Weekend mode uses the current week as catch-up.
-- The Scripture widget provides quick access to Previous/Today/Next readings.
-- Week 52 Friday disables Next.
+- `viewportBoundaryClass`;
+- `siteGutterClass`;
+- `siteContainerClass`;
+- `discoveryMasonryColumnsClass`;
+- `discoveryGridColumnsClass`.
 
-## Sharing
+`ResourcesContainer` delegates to `PageContainer` for compatibility with existing Resources components.
 
-`src/utils/scriptureShare.ts` builds:
+Intentional reading measures such as `max-w-3xl`, `max-w-5xl`, and `max-w-6xl` should remain local. They constrain readable content rather than defining the viewport boundary.
 
-- verse share payloads
-- selection share payloads
-- chapter share payloads
-- canonical `/scripture` URLs
+### Discovery-grid convention
 
-Copied text appends:
+The shared discovery progression is:
 
 ```text
-Continue reading on A.I.C Njoro Town Church:
+Mobile:             2 columns
+Tablet:             3 columns
+Small desktop:      4 columns
+Desktop:            5 columns
+Large desktop:      6 columns
+Very large desktop: 7 columns
 ```
 
-## Testing
+Resources consumes this progression for both masonry and grid fallbacks. Other features may reuse it when the same discovery model is appropriate, but should not adopt it merely for visual symmetry.
 
-Unit tests use Vitest.
+### Component-level responsiveness
 
-End-to-end tests use Playwright. The focused phase-one suite is:
+Components should prefer parent-constrained sizing and may use container queries when their inline space matters more than the device width. Repeated structural rules belong in shared primitives; feature-specific card geometry, editorial asymmetry, reading measures, and content hierarchy remain local.
 
-```bash
-pnpm test:e2e -- tests/e2e/project52-scripture.spec.ts
+Avoid using `w-screen`, `100vw`, fixed minimum widths, or overflow clipping as primary sizing fixes. Long-content flex/grid children should generally use `min-w-0`, and media should remain bounded by `max-w-full`.
+
+## Component Organization
+
+```text
+src/components/
+  layout/        shared page/container primitives
+  navigation/    header, drawer, side navigation, footer, floating browse shell
+  routing/       route-level presentation behavior
+  resources/     public Resources cards, shelves, navigation, masonry
+  media/         public Media discovery and player components
+  scripture/     Scripture reader and Bible tools
+  project52/     Project 52 presentation
+  portal/        authenticated portal and Writing Studio UI
+  auth/          authentication UI and route guards
+  landing/       homepage sections and highlights
+  ui/            reusable presentation controls
 ```
 
-This suite covers:
+Feature components should import shared structural primitives rather than duplicating them, while avoiding a single oversized universal layout component.
 
-- Project 52 widget direct opens
-- Project 52 full-route tile opens
-- Previous/Today/Next widget behavior
-- Week 52 edge behavior
-- mobile panel close behavior
-- Scripture action sheet
-- comparison modal behavior
-- multi-verse comparison highlights
-- shared verse links
-- cross-book previous chapter navigation
+## Accessibility
 
-## Known Engineering Notes
+Shared interactive systems should preserve:
 
-- React `StrictMode` may make dev-only render/effect behavior appear doubled.
-- Scripture API requests are cached by URL to avoid duplicate identical network work.
-- Full `pnpm lint` may reveal legacy warnings outside recently touched areas; focused lint has been used for changed files.
-- Bible version availability is currently surfaced as: "We are working toward adding more Bible versions and more languages."
+- real buttons and anchors;
+- visible focus states;
+- keyboard navigation;
+- Escape-to-close behavior;
+- focus trapping and restoration for modal surfaces;
+- appropriate ARIA labels and active-state semantics;
+- touch-friendly controls;
+- reduced-motion preferences;
+- sensible DOM and reading order;
+- no horizontal page overflow.
 
-## Future Work
+## Testing and Validation
 
-- Persist user reading progress.
-- Add reminders or daily notification hooks.
-- Add more Bible versions and languages.
-- Stabilize Scripture API response contracts.
-- Add backend-backed progress/account features if required.
-- Add analytics around Project 52 reading opens.
+- Unit/component tests use Vitest.
+- End-to-end tests use Playwright.
+- TypeScript is checked through the project build configuration.
+- ESLint is used for changed files and focused surfaces; legacy warnings may still exist elsewhere.
+- Production builds verify Tailwind class generation and expose bundle-size warnings.
+
+Important responsive states should be checked around 360, 390, 430, 768, 820, 1024, 1280, 1366, 1440, 1600, 1680, and 1920 pixels where the affected feature warrants it.
+
+## Current Limitations and Future Work
+
+- Public API memory caching has no TTL or background revalidation.
+- Generic public writing search remains outside Resources namespace caching.
+- Route and player code is still eagerly bundled; HLS/DASH and media-player dependencies require lazy-loading work.
+- Some API normalizers remain deliberately tolerant while backend contracts stabilize.
+- Browser end-to-end runs depend on the configured Vite test server becoming available within its startup timeout.
+- Continue refining shared navigation behavior with real content and authenticated states at every viewport.
+- Consider persisted reading progress, reminders, additional Bible versions/languages, and analytics as separate future phases.

@@ -28,6 +28,7 @@ type ResponsiveImageProps = {
   loading?: 'eager' | 'lazy';
   onRefreshAsset?: () => Promise<MediaAsset | null>;
   preset: ResponsiveImagePreset;
+  sizes?: string;
 };
 
 const ResponsiveImage = ({
@@ -38,6 +39,7 @@ const ResponsiveImage = ({
   loading = 'lazy',
   onRefreshAsset,
   preset,
+  sizes,
 }: ResponsiveImageProps) => {
   const [activeAsset, setActiveAsset] = useState(asset);
   const [hasRetried, setHasRetried] = useState(false);
@@ -76,11 +78,12 @@ const ResponsiveImage = ({
   const avifSrcSet = toSrcSet(avif);
   const webpSrcSet = toSrcSet(webp);
   const jpegSrcSet = toSrcSet(jpeg);
+  const resolvedSizes = sizes || imagePresets[preset].sizes;
 
   return (
     <picture>
-      {avifSrcSet ? <source srcSet={avifSrcSet} sizes={imagePresets[preset].sizes} type="image/avif" /> : null}
-      {webpSrcSet ? <source srcSet={webpSrcSet} sizes={imagePresets[preset].sizes} type="image/webp" /> : null}
+      {avifSrcSet ? <source srcSet={avifSrcSet} sizes={resolvedSizes} type="image/avif" /> : null}
+      {webpSrcSet ? <source srcSet={webpSrcSet} sizes={resolvedSizes} type="image/webp" /> : null}
       <img
         alt={resolvedAlt}
         className={className}
@@ -89,7 +92,7 @@ const ResponsiveImage = ({
         height={height}
         loading={loading}
         onError={() => { void handleError(); }}
-        sizes={imagePresets[preset].sizes}
+        sizes={resolvedSizes}
         src={fallbackUrl}
         srcSet={jpegSrcSet || undefined}
         width={width}
