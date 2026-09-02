@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import RouteTransition from "./components/routing/RouteTransition";
 import MobileBottomActionsProvider from "./components/navigation/MobileBottomActionsProvider";
 import RequireAuth from "./components/auth/RequireAuth";
+import RequirePortalAccess from "./components/auth/RequirePortalAccess";
 import { PortalToastProvider } from "./components/portal/PortalToast";
 import AboutPage from "./pages/AboutPage";
 import AccountPage from "./pages/AccountPage";
@@ -32,9 +33,13 @@ import { ScriptureReaderProvider } from "./contexts/ScriptureReaderContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
 const PortalRoute = ({ children }: { children: ReactNode }) => (
-  <RequireAuth>
+  <RequirePortalAccess>
     <PortalToastProvider>{children}</PortalToastProvider>
-  </RequireAuth>
+  </RequirePortalAccess>
+);
+
+const AccountRoute = ({ children }: { children: ReactNode }) => (
+  <RequireAuth>{children}</RequireAuth>
 );
 
 function App() {
@@ -56,8 +61,8 @@ function App() {
                 <Route path="/media/watch/:slug" element={<MediaWatchPage />} />
                 <Route path="/ministries" element={<MinistriesPage />} />
                 <Route path="/settings" element={<PlannedDestinationPage eyebrow="Preferences" icon={Settings} title="Settings" description="Site preferences, accessibility options, notifications, and personal defaults will be managed here." />} />
-                <Route path="/account" element={<PortalRoute><AccountPage /></PortalRoute>} />
-                <Route path="/account/profile" element={<PortalRoute><AccountPage profile /></PortalRoute>} />
+                <Route path="/account" element={<AccountRoute><AccountPage /></AccountRoute>} />
+                <Route path="/account/profile" element={<AccountRoute><AccountPage profile /></AccountRoute>} />
                 <Route
                   path="/portal"
                   element={

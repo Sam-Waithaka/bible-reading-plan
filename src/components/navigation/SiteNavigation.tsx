@@ -15,7 +15,6 @@ import { AccountIcon, GivingIcon, siteIcons } from '../../constants/siteIcons';
 import { useCompactHeader } from '../../hooks/useCompactHeader';
 import { useNearSiteFooter } from '../../hooks/useNearSiteFooter';
 import { useAuth } from '../../hooks/useAuth';
-import { canAccessWritingStudio } from '../../utils/permissions';
 import SignInModal from '../auth/SignInModal';
 import {
   getMobileGiveMode,
@@ -30,6 +29,7 @@ import {
   publicNavigationSections,
   type NavigationItem,
 } from './navigationModel';
+import { getVisiblePortalNavigationSections } from './portalNavigationModel';
 
 type SiteNavigationProps = {
   compact?: boolean;
@@ -86,6 +86,10 @@ const SiteNavigation = ({
   const accountInitials = initialsFor(accountName);
   const avatarUrl = auth.user?.profile?.profilePhoto;
   const canEnterPortal = auth.hasPortalAccess;
+  const visiblePortalSections = getVisiblePortalNavigationSections({
+    hasPortalAccess: auth.hasPortalAccess,
+    permissions: auth.permissions,
+  });
   const { hasBlockingOverlay, hasPageAction } = useMobileBottomActions();
   const mobileGiveMode = getMobileGiveMode({
     blocked: drawerOpen || signInOpen || hasBlockingOverlay || fullscreenActive,
@@ -243,7 +247,7 @@ const SiteNavigation = ({
     </section>
   );
 
-  const renderIdentityCard = (shape: 'drawer' | 'side') => auth.user ? (
+  const renderIdentityCard = (shape: 'drawer' | 'side', context: 'public' | 'portal' = 'public') => auth.user ? (
     <div className={`rounded-2xl border p-3 ${shape === 'drawer' ? 'mt-4' : 'mt-5'} ${darkMode ? 'border-white/10 bg-white/[0.04]' : 'border-black/10 bg-white/70'}`}>
       <div className="flex min-w-0 items-center gap-2.5">
         <span className={`grid size-9 shrink-0 place-items-center overflow-hidden rounded-xl text-xs font-black ${darkMode ? 'bg-red-950/60 text-red-100' : 'bg-red-950/5 text-red-800'}`}>
@@ -256,7 +260,7 @@ const SiteNavigation = ({
       </div>
       <div className="mt-2 flex items-center justify-between gap-2 text-xs font-bold">
         <Link to="/account" onClick={shape === 'drawer' ? closeDrawer : undefined} className={darkMode ? 'text-stone-300' : 'text-zinc-700'}>My Account</Link>
-        {canEnterPortal ? (
+        {context === 'public' && canEnterPortal ? (
           <Link to="/portal" onClick={shape === 'drawer' ? closeDrawer : undefined} className="inline-flex items-center gap-1 text-red-800 dark:text-red-200">
             Portal <ChevronRight size={13} aria-hidden="true" />
           </Link>
@@ -265,12 +269,14 @@ const SiteNavigation = ({
     </div>
   ) : null;
 
-  const renderAccountSection = (shape: 'drawer' | 'side') => auth.user ? (
+  const renderAccountSection = (shape: 'drawer' | 'side', context: 'public' | 'portal' = 'public') => auth.user ? (
     <section aria-labelledby={`${shape}-nav-account`}>
       {renderSectionTitle('Account', 'account', shape)}
       <div className="grid gap-2">
-        {accountNavigationItems.map((item) => renderNavItem(item, shape, shape === 'drawer' ? closeDrawer : undefined))}
-        {canEnterPortal ? renderNavItem(portalNavigationItem, shape, shape === 'drawer' ? closeDrawer : undefined) : null}
+        {accountNavigationItems
+          .filter((item) => context === 'public' || item.id === 'profile')
+          .map((item) => renderNavItem(item, shape, shape === 'drawer' ? closeDrawer : undefined))}
+        {context === 'public' && canEnterPortal ? renderNavItem(portalNavigationItem, shape, shape === 'drawer' ? closeDrawer : undefined) : null}
       </div>
     </section>
   ) : null;
@@ -306,19 +312,20 @@ const SiteNavigation = ({
 
   const renderPortalNavigation = (shape: 'drawer' | 'side') => (
     <>
-      <section aria-labelledby={`${shape}-nav-portal`}>
-        {renderSectionTitle('Staff Portal', 'portal', shape)}
-        <div className="grid gap-2">
-          {renderNavItem(portalNavigationItem, shape, shape === 'drawer' ? closeDrawer : undefined)}
-          {canAccessWritingStudio(auth.permissions)
-            ? renderNavItem({ id: 'writing-studio', label: 'Writing Studio', href: '/portal/writing', icon: siteIcons.resources, match: 'prefix', type: 'route' }, shape, shape === 'drawer' ? closeDrawer : undefined)
-            : null}
-          {renderNavItem({ id: 'back-to-site', label: 'Back to Site', href: '/', icon: siteIcons.home, match: 'exact', type: 'route' }, shape, shape === 'drawer' ? closeDrawer : undefined)}
-        </div>
-      </section>
-      {renderAccountSection(shape)}
+      {visiblePortalSections.map((section) => (
+        <section key={section.id} aria-labelledby={`${shape}-nav-${section.id}`}>
+          {renderSectionTitle(section.label, section.id, shape)}
+          <div className="grid gap-2">
+            {section.items.map((item) => renderNavItem(item, shape, shape === 'drawer' ? closeDrawer : undefined))}
+          </div>
+        </section>
+      ))}
+      {renderAccountSection(shape, 'portal')}
       {renderSection(preferencesSection, shape, shape === 'drawer', preferencesOpen, () => setPreferencesOpen((value) => !value))}
-      {renderLogout(shape)}
+      <div className={`grid gap-2 border-t pt-4 ${darkMode ? 'border-white/10' : 'border-black/10'}`}>
+        {renderNavItem({ id: 'back-to-site', label: 'Back to Site', href: '/', icon: siteIcons.home, match: 'exact', type: 'route' }, shape, shape === 'drawer' ? closeDrawer : undefined)}
+        {renderLogout(shape)}
+      </div>
     </>
   );
 
@@ -347,7 +354,7 @@ const SiteNavigation = ({
         <div className={`absolute right-0 top-full z-40 mt-3 w-64 rounded-2xl border p-2 shadow-2xl ${darkMode ? 'border-white/10 bg-zinc-950 text-stone-100 shadow-black/40' : 'border-black/10 bg-white text-zinc-950 shadow-zinc-900/15'}`} role="menu">
           <div className={`mb-2 rounded-xl px-3 py-3 ${darkMode ? 'bg-white/[0.04]' : 'bg-[#f8f5ef]'}`}><p className="truncate text-sm font-black">{accountName}</p><p className={`truncate text-xs ${darkMode ? 'text-stone-400' : 'text-zinc-500'}`}>{auth.user.email || auth.user.phoneNumber}</p></div>
           {accountNavigationItems.map((item) => renderNavItem(item, 'side', () => setAccountOpen(false)))}
-          {canEnterPortal ? renderNavItem(portalNavigationItem, 'side', () => setAccountOpen(false)) : null}
+          {!portalContext && canEnterPortal ? renderNavItem(portalNavigationItem, 'side', () => setAccountOpen(false)) : null}
           <button type="button" onClick={onToggleTheme} className={getUtilityItemClass('side')}>{darkMode ? <Sun size={17} /> : <Moon size={17} />}{darkMode ? 'Light theme' : 'Dark theme'}</button>
           <button type="button" onClick={async () => { setAccountOpen(false); await auth.signOut(); navigate('/'); }} className={getUtilityItemClass('side')}><LogOut size={17} /> Logout</button>
         </div>
@@ -372,7 +379,7 @@ const SiteNavigation = ({
           </a>
           <div className="hidden min-w-0 items-center justify-center gap-2 xl:flex 2xl:gap-3">
             {portalContext ? (
-              <div className="flex items-center gap-4"><span className="text-xs font-black uppercase tracking-[0.18em] text-red-800 dark:text-red-200">Staff Portal</span><Link to="/" className={getNavItemClass(false, 'top')}>Back to Site</Link></div>
+              <div className="flex items-center gap-2"><span className="mr-2 text-xs font-black uppercase tracking-[0.18em] text-red-800 dark:text-red-200">Staff Portal</span>{visiblePortalSections.flatMap((section) => section.items).map((item) => renderNavItem(item, 'top'))}<Link to="/" className={getNavItemClass(false, 'top')}>Back to Site</Link></div>
             ) : (
               <><nav className="flex items-center gap-1" aria-label="Site navigation">{topNavigationItems.map((item) => renderNavItem(item, 'top'))}</nav>{renderGiveButton('top')}</>
             )}
@@ -406,7 +413,7 @@ const SiteNavigation = ({
               <div className="flex min-w-0 items-center gap-3"><img src={assetPaths.circleLogo} alt="" className="size-11 rounded-2xl border border-red-900/15 bg-white object-contain p-1 shadow-sm" /><div className="min-w-0"><p className="truncate text-base font-extrabold">AIC Njoro Town</p>{portalContext ? <p className="text-[10px] font-black uppercase tracking-[0.16em] text-red-800 dark:text-red-200">Staff Portal</p> : null}</div></div>
               <button ref={drawerCloseRef} type="button" onClick={closeDrawer} className={`grid size-10 shrink-0 place-items-center rounded-full border ${darkMode ? 'border-white/10 bg-white/10' : 'border-black/10 bg-white'}`} aria-label="Close navigation menu"><X size={19} /></button>
             </div>
-            {renderIdentityCard('drawer')}
+            {renderIdentityCard('drawer', portalContext ? 'portal' : 'public')}
             <nav ref={drawerScrollRef} className="mt-6 grid min-h-0 flex-1 content-start gap-6 overflow-y-auto overscroll-contain pb-2" aria-label={portalContext ? 'Staff Portal navigation' : 'Mobile site navigation'}>
               {portalContext ? renderPortalNavigation('drawer') : renderPublicNavigation('drawer')}
             </nav>

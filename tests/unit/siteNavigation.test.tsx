@@ -9,6 +9,7 @@ import SiteNavigation from '../../src/components/navigation/SiteNavigation';
 import MobileBottomActionsProvider from '../../src/components/navigation/MobileBottomActionsProvider';
 import { usePageBottomAction } from '../../src/components/navigation/mobileBottomActionContext';
 import type { AuthUser } from '../../src/types/auth';
+import { WRITING_PERMISSIONS } from '../../src/utils/permissions';
 
 const mocks = vi.hoisted(() => ({
   auth: {
@@ -165,5 +166,45 @@ describe('SiteNavigation', () => {
     expect(container.textContent).toContain('Staff Portal');
     expect(container.textContent).toContain('Back to Site');
     expect(container.querySelector('a[aria-label="Give"]')).toBeNull();
+
+    const triggers = container.querySelectorAll<HTMLButtonElement>('button[aria-label="Open navigation menu"]');
+    await act(async () => triggers[triggers.length - 1].click());
+    const drawer = container.querySelector('[role="dialog"]')!;
+    expect(drawer.textContent).toContain('Dashboard');
+    expect(drawer.textContent).not.toContain('Enter Staff Portal');
+    expect(drawer.textContent).not.toContain('Writing Studio');
+    expect(drawer.textContent?.match(/My Account/g)).toHaveLength(1);
+    expect(drawer.textContent).toContain('Profile');
+    expect(drawer.textContent).toContain('Logout');
+    expect(drawer.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
+    expect(drawer.querySelector('[aria-current="page"]')?.textContent).toContain('Dashboard');
+  });
+
+  it('activates only Writing Studio on a nested permitted Portal route', async () => {
+    mocks.auth.hasPortalAccess = true;
+    mocks.auth.permissions = [WRITING_PERMISSIONS.createWriting];
+    mocks.auth.user = {
+      email: 'editor@example.com', emailVerified: true, firstName: 'Editor', groups: [], id: 3,
+      lastName: 'Member', permissions: mocks.auth.permissions, phoneNumber: '', profile: null, username: 'editor',
+    };
+    await renderAt('/portal/writing/articles');
+    const triggers = container.querySelectorAll<HTMLButtonElement>('button[aria-label="Open navigation menu"]');
+    await act(async () => triggers[triggers.length - 1].click());
+    const drawer = container.querySelector('[role="dialog"]')!;
+    const active = drawer.querySelectorAll('[aria-current="page"]');
+    expect(active).toHaveLength(1);
+    expect(active[0].textContent).toContain('Writing Studio');
+    expect(drawer.textContent).not.toContain('Enter Staff Portal');
+  });
+
+  it('does not expose the public Portal gateway without Portal capability', async () => {
+    mocks.auth.user = {
+      email: 'member@example.com', emailVerified: true, firstName: 'Member', groups: [], id: 4,
+      lastName: 'User', permissions: [], phoneNumber: '', profile: null, username: 'member',
+    };
+    await renderAt('/');
+    const triggers = container.querySelectorAll<HTMLButtonElement>('button[aria-label="Open navigation menu"]');
+    await act(async () => triggers[triggers.length - 1].click());
+    expect(container.querySelector('[role="dialog"]')?.textContent).not.toContain('Enter Staff Portal');
   });
 });
