@@ -418,7 +418,6 @@ const ResourcesDetailPage = () => {
       }`}
     >
       <SiteHeader
-        activePath="/resources"
         darkMode={darkMode}
         onToggleTheme={toggleTheme}
       />

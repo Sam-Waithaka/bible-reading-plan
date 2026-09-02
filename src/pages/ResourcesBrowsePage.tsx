@@ -140,7 +140,7 @@ const ResourcesBrowsePage = ({ mode }: { mode: BrowseMode }) => {
 
   return (
     <div className={`flex min-h-screen flex-col overflow-x-clip transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
-      <SiteHeader activePath="/resources" darkMode={darkMode} onToggleTheme={toggleTheme} />
+      <SiteHeader darkMode={darkMode} onToggleTheme={toggleTheme} />
       <main className={`flex-1 ${darkMode ? 'bg-[#080808]' : 'bg-[linear-gradient(180deg,#f8f5ef,#fffaf0_42%,#f8f5ef)]'}`}>
         <section className="border-b border-black/10 py-14 dark:border-white/10">
           <ResourcesContainer>

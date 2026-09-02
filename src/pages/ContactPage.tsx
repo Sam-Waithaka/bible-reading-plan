@@ -8,7 +8,7 @@ const ContactPage = () => {
 
   return (
     <div className={`flex min-h-screen flex-col overflow-x-clip transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
-      <SiteHeader activePath="/contact" darkMode={darkMode} onToggleTheme={toggleTheme} />
+      <SiteHeader darkMode={darkMode} onToggleTheme={toggleTheme} />
 
       <main className="flex-1">
         <ContactIntro darkMode={darkMode} />

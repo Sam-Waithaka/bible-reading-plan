@@ -328,7 +328,7 @@ const ScripturePage = () => {
   return (
     <div className={`h-screen overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
       <div className="flex h-screen overflow-hidden">
-        <SiteSideNav activePath="/scripture" darkMode={darkMode} onToggleTheme={toggleTheme} />
+        <SiteSideNav darkMode={darkMode} onToggleTheme={toggleTheme} />
         <ScriptureBooksRail
           books={books}
           darkMode={darkMode}
@@ -339,7 +339,6 @@ const ScripturePage = () => {
         <main className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
           <div className="lg:hidden">
             <SiteHeader
-              activePath="/scripture"
               darkMode={darkMode}
               onToggleTheme={toggleTheme}
             />

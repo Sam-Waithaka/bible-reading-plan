@@ -222,7 +222,7 @@ const buildAvailableModules = (
     ? [
         {
           description: "Manage your account details and church profile.",
-          href: "/portal#profile",
+          href: "/account/profile",
           icon: siteIcons.account,
           title: "Profile",
         },

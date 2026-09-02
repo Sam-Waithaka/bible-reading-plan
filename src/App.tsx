@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
+import { CalendarDays, CircleHelp, Settings } from "lucide-react";
 import { Route, Routes } from "react-router-dom";
 import RouteTransition from "./components/routing/RouteTransition";
 import RequireAuth from "./components/auth/RequireAuth";
 import { PortalToastProvider } from "./components/portal/PortalToast";
 import AboutPage from "./pages/AboutPage";
+import AccountPage from "./pages/AccountPage";
 import ContactPage from "./pages/ContactPage";
 import GivePage from "./pages/GivePage";
 import LandingPage from "./pages/LandingPage";
@@ -12,6 +14,7 @@ import MediaWatchPage from "./components/media/watch/MediaWatchPage";
 import MinistriesPage from "./pages/MinistriesPage";
 import Project52Page from "./pages/Project52Page";
 import PortalPage from "./pages/PortalPage";
+import PlannedDestinationPage from "./pages/PlannedDestinationPage";
 import ResourcesBrowsePage from "./pages/ResourcesBrowsePage";
 import ResourcesDetailPage from "./pages/ResourcesDetailPage";
 import ResourcesPage from "./pages/ResourcesPage";
@@ -44,10 +47,15 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/events" element={<PlannedDestinationPage eyebrow="Church life" icon={CalendarDays} title="Events" description="Upcoming services, gatherings, ministry activities, and important church dates will be shared here." />} />
                 <Route path="/give" element={<GivePage />} />
+                <Route path="/help" element={<PlannedDestinationPage eyebrow="Support" icon={CircleHelp} title="Help" description="Guidance for using Scripture, Project 52, Resources, Media, and your church account will live here." />} />
                 <Route path="/media" element={<MediaPage />} />
                 <Route path="/media/watch/:slug" element={<MediaWatchPage />} />
                 <Route path="/ministries" element={<MinistriesPage />} />
+                <Route path="/settings" element={<PlannedDestinationPage eyebrow="Preferences" icon={Settings} title="Settings" description="Site preferences, accessibility options, notifications, and personal defaults will be managed here." />} />
+                <Route path="/account" element={<PortalRoute><AccountPage /></PortalRoute>} />
+                <Route path="/account/profile" element={<PortalRoute><AccountPage profile /></PortalRoute>} />
                 <Route
                   path="/portal"
                   element={

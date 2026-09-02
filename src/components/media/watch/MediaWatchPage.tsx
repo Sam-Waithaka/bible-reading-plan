@@ -15,7 +15,7 @@ const MediaWatchPage = () => {
 
   return (
     <div className={`flex min-h-screen flex-col overflow-x-clip transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
-      <SiteHeader activePath="/media" darkMode={darkMode} onToggleTheme={toggleTheme} />
+      <SiteHeader darkMode={darkMode} onToggleTheme={toggleTheme} />
 
       <main className={`relative flex-1 ${darkMode ? 'bg-[#080808]' : 'bg-[#f8f5ef]'}`}>
         <div className="absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_50%_0%,rgba(127,29,29,0.32),transparent_36%)]" />

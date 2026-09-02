@@ -125,11 +125,11 @@ const Project52Page = () => {
   return (
     <div className={`h-screen overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-[#080808] text-stone-100' : 'bg-[#f8f5ef] text-zinc-950'}`}>
       <div className="flex h-screen overflow-hidden">
-        <SiteSideNav activePath="/project52" darkMode={darkMode} onToggleTheme={toggleTheme} />
+        <SiteSideNav darkMode={darkMode} onToggleTheme={toggleTheme} />
 
         <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
           <div className="lg:hidden">
-            <SiteHeader activePath="/project52" darkMode={darkMode} onToggleTheme={toggleTheme} />
+            <SiteHeader darkMode={darkMode} onToggleTheme={toggleTheme} />
           </div>
 
           <main className="flex-1">
