@@ -56,7 +56,11 @@ const HomeWritingCard = ({ article, layout, role }: HomeWritingCardProps) => {
             asset={image}
             className="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-[1.03]"
             preset="card"
-            sizes={isPair ? "(max-width: 639px) calc(50vw - 2.5rem), (max-width: 1279px) calc(50vw - 4rem), 32vw" : undefined}
+            sizes={
+              isPair
+                ? "(max-width: 639px) calc(50vw - 2.5rem), (max-width: 1279px) calc(50vw - 4rem), 32vw"
+                : undefined
+            }
           />
           <span
             className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10"
@@ -75,11 +79,15 @@ const HomeWritingCard = ({ article, layout, role }: HomeWritingCardProps) => {
             {article.title}
           </span>
           {(isAnchor || isPair) && articleDescription(article) ? (
-            <span className={`${isPair ? "line-clamp-3" : "line-clamp-4"} mt-3 text-xs leading-5 text-zinc-600 dark:text-stone-300 sm:line-clamp-none sm:text-sm`}>
+            <span
+              className={`${isPair ? "line-clamp-3" : "line-clamp-4"} mt-3 text-xs leading-5 text-zinc-600 dark:text-stone-300 sm:line-clamp-none sm:text-sm`}
+            >
               {articleDescription(article)}
             </span>
           ) : null}
-          <span className={`${isPair ? "mt-auto shrink-0 pt-3" : "mt-3"} flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] font-semibold text-zinc-600 dark:text-stone-400 sm:text-xs`}>
+          <span
+            className={`${isPair ? "mt-auto shrink-0 pt-3" : "mt-3"} flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] font-semibold text-zinc-600 dark:text-stone-400 sm:text-xs`}
+          >
             <span className="inline-flex items-center gap-1.5">
               <Clock3 size={13} aria-hidden="true" />
               {article.reading_time_minutes || 1} min read
@@ -131,7 +139,9 @@ const HomeWritingCard = ({ article, layout, role }: HomeWritingCardProps) => {
           aria-hidden="true"
         />
 
-        <span className={`${isPair ? "mt-5 flex flex-1 flex-col" : "mt-auto"} min-w-0`}>
+        <span
+          className={`${isPair ? "mt-5 flex flex-1 flex-col" : "mt-auto"} min-w-0`}
+        >
           {category && (isAnchor || isPair) ? (
             <span
               className="mb-3 block font-serif text-sm"
@@ -146,7 +156,9 @@ const HomeWritingCard = ({ article, layout, role }: HomeWritingCardProps) => {
             {article.title}
           </span>
           {(isAnchor || isPair) && articleDescription(article) ? (
-            <span className={`${isPair ? "line-clamp-3" : "line-clamp-4"} mt-4 text-xs leading-5 text-stone-100/90 sm:line-clamp-none sm:text-sm sm:leading-6`}>
+            <span
+              className={`${isPair ? "line-clamp-3" : "line-clamp-4"} mt-4 text-xs leading-5 text-stone-100/90 sm:line-clamp-none sm:text-sm sm:leading-6`}
+            >
               {articleDescription(article)}
             </span>
           ) : null}
@@ -324,16 +336,24 @@ const HomeResourcesHighlight = ({ darkMode }: HomeResourcesHighlightProps) => {
                   className={`animate-pulse rounded-xl border sm:rounded-2xl ${darkMode ? "border-white/10 bg-white/[0.05]" : "border-black/10 bg-black/[0.05]"}`}
                 />
               </>
-            ) : anchor ? (
+            ) : content && anchor ? (
               <>
                 <div
                   className={`${hasFullShelf ? "row-span-2" : supporting ? "" : "col-span-2"} min-w-0`}
                 >
-                  <HomeWritingCard article={anchor} layout={content.layout} role="anchor" />
+                  <HomeWritingCard
+                    article={anchor}
+                    layout={content.layout}
+                    role="anchor"
+                  />
                 </div>
                 {supporting ? (
                   <div className="min-w-0">
-                    <HomeWritingCard article={supporting} layout={content.layout} role="supporting" />
+                    <HomeWritingCard
+                      article={supporting}
+                      layout={content.layout}
+                      role="supporting"
+                    />
                   </div>
                 ) : null}
                 {lowerItem ? (
